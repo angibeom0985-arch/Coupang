@@ -38,6 +38,7 @@ export interface LinksData {
     profile: Profile;
     links: ContentItem[];
     adBanner?: string;
+    profileEnabled?: boolean;
 }
 
 const DATA_KEY = 'coupang_links_data';

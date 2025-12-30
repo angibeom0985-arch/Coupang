@@ -38,7 +38,9 @@ export default function Home() {
                 style={{ backgroundColor: data.profile.theme.backgroundColor }}
             >
                 <div className="max-w-2xl mx-auto">
-                    <ProfileHeader profile={data.profile} />
+                    {data.profileEnabled !== false && (
+                        <ProfileHeader profile={data.profile} />
+                    )}
 
                     <div className="space-y-4 mt-8">
                         {enabledLinks.map((item) => (

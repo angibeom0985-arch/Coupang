@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "링크 모음 | Link in Bio",
+    title: "생꿀 | 생활 꿀팁&꿀템",
     description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
-    keywords: ["링크인바이오", "링크모음", "소셜미디어", "프로필링크"],
+    keywords: ["소셜미디어", "프로필링크", "꿀팁", "꿀템"],
     authors: [{ name: "Coupang Link Bio" }],
     openGraph: {
         title: "링크 모음 | Link in Bio",

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { LinksData, ContentItem } from '@/lib/data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
 import { ProfileEditor } from './profile-editor';
 import { LinkEditor } from './link-editor';
 import { ThemeEditor } from './theme-editor';
@@ -159,10 +160,23 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                                 />
                             </div>
 
-                            <ProfileEditor
-                                profile={data.profile}
-                                onUpdate={updateProfile}
-                            />
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+                                    <label className="text-sm font-medium">
+                                        프로필 설정
+                                    </label>
+                                    <Switch
+                                        checked={data.profileEnabled !== false}
+                                        onCheckedChange={(checked) => onDataChange({ ...data, profileEnabled: checked })}
+                                    />
+                                </div>
+                                {data.profileEnabled !== false && (
+                                    <ProfileEditor
+                                        profile={data.profile}
+                                        onUpdate={updateProfile}
+                                    />
+                                )}
+                            </div>
                         </div>
                         <LinkEditor
                             links={data.links}
