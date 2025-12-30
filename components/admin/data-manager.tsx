@@ -39,14 +39,45 @@ export function DataManager({ data }: DataManagerProps) {
                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-900 font-medium mb-2">💡 사용 방법</p>
                     <ol className="text-sm text-yellow-800 space-y-1 list-decimal list-inside">
-                        <li>편집이 완료되면 "JSON 다운로드" 버튼을 클릭합니다.</li>
-                        <li>다운로드된 <code className="bg-yellow-100 px-1 rounded">links.json</code> 파일을 GitHub 리포지토리의 <code className="bg-yellow-100 px-1 rounded">data/</code> 폴더에 업로드합니다.</li>
-                        <li>GitHub에 커밋하면 Vercel이 자동으로 재배포합니다.</li>
+                        <li>편집이 완료되면 <strong>"서버에 저장"</strong> 버튼을 클릭합니다.</li>
+                        <li>데이터가 자동으로 <code className="bg-yellow-100 px-1 rounded">data/links.json</code>에 저장됩니다.</li>
+                        <li>또는 "JSON 다운로드"로 파일을 받아 수동으로 업로드할 수 있습니다.</li>
                     </ol>
                 </div>
 
                 <div className="space-y-2">
-                    <Button onClick={exportJSON} className="w-full" size="lg">
+                    <Button
+                        onClick={async () => {
+                            try {
+                                const response = await fetch('/api/save', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(data),
+                                });
+
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    alert('✅ 데이터가 저장되었습니다!');
+                                } else {
+                                    alert('❌ ' + (result.error || '저장 실패'));
+                                }
+                            } catch (error) {
+                                console.error('Save error:', error);
+                                alert('❌ 저장 중 오류가 발생했습니다.');
+                            }
+                        }}
+                        className="w-full"
+                        size="lg"
+                        variant="default"
+                    >
+                        <Upload className="w-4 h-4 mr-2" />
+                        서버에 저장
+                    </Button>
+
+                    <Button onClick={exportJSON} className="w-full" size="lg" variant="outline">
                         <Download className="w-4 h-4 mr-2" />
                         JSON 다운로드
                     </Button>
