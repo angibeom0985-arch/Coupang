@@ -20,9 +20,6 @@ export const metadata: Metadata = {
         title: "링크 모음 | Link in Bio",
         description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
     },
-    icons: {
-        icon: "/favicon.ico",
-    },
     viewport: {
         width: "device-width",
         initialScale: 1,
