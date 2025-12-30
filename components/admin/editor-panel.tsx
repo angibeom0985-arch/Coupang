@@ -20,6 +20,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
     const [debouncedData] = useDebounce(data, 1000);
     const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Auto-save effect
     useEffect(() => {
@@ -27,6 +28,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
             if (!debouncedData) return;
 
             setSaveStatus('saving');
+            setErrorMessage(null);
             try {
                 const response = await fetch('/api/save', {
                     method: 'POST',
@@ -43,10 +45,12 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                     setLastSaved(new Date());
                 } else {
                     setSaveStatus('error');
+                    setErrorMessage(result.error || '알 수 없는 오류');
                     console.error('Save failed:', result.error);
                 }
             } catch (error) {
                 setSaveStatus('error');
+                setErrorMessage('네트워크 오류가 발생했습니다.');
                 console.error('Save error:', error);
             }
         };
@@ -117,7 +121,14 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         </>
                     )}
                     {saveStatus === 'error' && (
-                        <span className="text-red-500">❌ 저장 실패</span>
+                        <div className="flex items-center text-red-500 gap-1">
+                            <span>❌ 저장 실패</span>
+                            {errorMessage && (
+                                <span className="text-xs bg-red-100 px-2 py-0.5 rounded-full max-w-[200px] truncate" title={errorMessage}>
+                                    {errorMessage}
+                                </span>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
