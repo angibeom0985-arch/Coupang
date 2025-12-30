@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getLinksData, LinksData } from '@/lib/data';
+import { getLinksData } from '@/lib/data';
+import type { LinksData } from '@/lib/data';
 import { PreviewPanel } from '@/components/admin/preview-panel';
 import { EditorPanel } from '@/components/admin/editor-panel';
 
@@ -10,7 +11,11 @@ export default function AdminPage() {
 
     useEffect(() => {
         // Load initial data
-        setData(getLinksData());
+        const loadData = async () => {
+            const data = await getLinksData();
+            setData(data);
+        };
+        loadData();
     }, []);
 
     if (!data) {

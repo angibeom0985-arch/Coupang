@@ -1,3 +1,4 @@
+import { kv } from '@vercel/kv';
 import linksData from '@/data/links.json';
 
 export interface Theme {
@@ -39,11 +40,17 @@ export interface LinksData {
     adBanner?: string;
 }
 
-export function getLinksData(): LinksData {
-    return linksData as LinksData;
-}
+const DATA_KEY = 'coupang_links_data';
 
-export function getEnabledLinks(): ContentItem[] {
-    const data = getLinksData();
-    return data.links.filter(link => link.enabled);
+export async function getLinksData(): Promise<LinksData> {
+    try {
+        const data = await kv.get<LinksData>(DATA_KEY);
+        if (data) {
+            return data;
+        }
+    } catch (error) {
+        console.warn('Failed to fetch from KV, falling back to local data:', error);
+    }
+
+    return linksData as LinksData;
 }

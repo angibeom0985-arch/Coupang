@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
+import { kv } from '@vercel/kv';
 
 // Ensure this route uses Node.js runtime
 export const runtime = 'nodejs';
@@ -19,10 +18,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Save to links.json
-        const filePath = path.join(process.cwd(), 'data', 'links.json');
-        const jsonContent = JSON.stringify(data, null, 4);
-        await writeFile(filePath, jsonContent, 'utf-8');
+        // Save to KV
+        await kv.set('coupang_links_data', data);
 
         return NextResponse.json({
             success: true,

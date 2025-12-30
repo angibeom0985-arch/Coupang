@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getLinksData, LinksData } from '@/lib/data';
+import { getLinksData } from '@/lib/data';
+import type { LinksData } from '@/lib/data';
 import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
 import { AdBanner } from '@/components/ad-banner';
@@ -11,7 +12,11 @@ export default function Home() {
 
     useEffect(() => {
         // Load initial data
-        setData(getLinksData());
+        const loadData = async () => {
+            const data = await getLinksData();
+            setData(data);
+        };
+        loadData();
     }, []);
 
     if (!data) {
