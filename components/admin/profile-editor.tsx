@@ -62,25 +62,34 @@ export function ProfileEditor({ profile, onUpdate }: ProfileEditorProps) {
                                 const file = e.target.files?.[0];
                                 if (!file) return;
 
+                                console.log('파일 선택됨:', file.name, file.type, file.size);
+
                                 const formData = new FormData();
                                 formData.append('file', file);
 
                                 try {
+                                    console.log('업로드 시작...');
                                     const response = await fetch('/api/upload', {
                                         method: 'POST',
                                         body: formData,
                                     });
 
+                                    console.log('응답 상태:', response.status);
                                     const data = await response.json();
+                                    console.log('응답 데이터:', data);
 
                                     if (data.success) {
                                         onUpdate('avatar', data.url);
+                                        alert('✅ 이미지가 업로드되었습니다!');
+                                        // Reset input
+                                        e.target.value = '';
                                     } else {
-                                        alert(data.error || '업로드 실패');
+                                        console.error('업로드 실패:', data.error);
+                                        alert('❌ ' + (data.error || '업로드 실패'));
                                     }
                                 } catch (error) {
                                     console.error('Upload error:', error);
-                                    alert('업로드 중 오류가 발생했습니다.');
+                                    alert('❌ 업로드 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
                                 }
                             }}
                         />

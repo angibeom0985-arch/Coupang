@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { existsSync } from 'fs';
+
+// Ensure this route uses Node.js runtime
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 
 export async function POST(request: NextRequest) {
     try {
@@ -41,8 +47,14 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
+        // Ensure uploads directory exists
+        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+        if (!existsSync(uploadsDir)) {
+            await mkdir(uploadsDir, { recursive: true });
+        }
+
         // Save to public/uploads
-        const uploadPath = path.join(process.cwd(), 'public', 'uploads', filename);
+        const uploadPath = path.join(uploadsDir, filename);
         await writeFile(uploadPath, buffer);
 
         // Return the public URL
@@ -55,6 +67,10 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('Upload error:', error);
+        console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+        });
         return NextResponse.json(
             { error: '파일 업로드 중 오류가 발생했습니다.' },
             { status: 500 }
