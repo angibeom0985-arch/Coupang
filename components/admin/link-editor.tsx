@@ -49,7 +49,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     const updateItem = (id: string, updates: Partial<ContentItem>) => {
         onUpdate(
             links.map(link =>
-                link.id === id ? { ...link, ...updates } : link
+                link.id === id ? { ...link, ...updates } as ContentItem : link
             )
         );
     };
