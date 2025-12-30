@@ -27,7 +27,7 @@ export default function AdminPage() {
             <header className="border-b bg-background px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">링크 인 바이오 편집기</h1>
+                        <h1 className="text-2xl font-bold">링크 모음</h1>
                         <p className="text-sm text-muted-foreground mt-1">
                             실시간으로 편집하고 JSON을 다운로드하세요
                         </p>

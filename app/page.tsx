@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getLinksData, LinksData } from '@/lib/data';
 import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
+import { AdBanner } from '@/components/ad-banner';
 
 export default function Home() {
     const [data, setData] = useState<LinksData | null>(null);
@@ -24,19 +25,23 @@ export default function Home() {
     const enabledLinks = data.links.filter(link => link.enabled);
 
     return (
-        <div
-            className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
-            style={{ backgroundColor: data.profile.theme.backgroundColor }}
-        >
-            <div className="max-w-2xl mx-auto">
-                <ProfileHeader profile={data.profile} />
+        <>
+            {data.adBanner && <AdBanner text={data.adBanner} />}
 
-                <div className="space-y-4 mt-8">
-                    {enabledLinks.map((item) => (
-                        <LinkCard key={item.id} item={item} theme={data.profile.theme} />
-                    ))}
+            <div
+                className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
+                style={{ backgroundColor: data.profile.theme.backgroundColor }}
+            >
+                <div className="max-w-2xl mx-auto">
+                    <ProfileHeader profile={data.profile} />
+
+                    <div className="space-y-4 mt-8">
+                        {enabledLinks.map((item) => (
+                            <LinkCard key={item.id} item={item} theme={data.profile.theme} />
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

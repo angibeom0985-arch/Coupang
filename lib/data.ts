@@ -36,6 +36,7 @@ export type ContentItem = LinkItem | TextItem;
 export interface LinksData {
     profile: Profile;
     links: ContentItem[];
+    adBanner?: string;
 }
 
 export function getLinksData(): LinksData {
