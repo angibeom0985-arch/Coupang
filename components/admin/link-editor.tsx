@@ -18,32 +18,18 @@ import {
 import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
 import YoutubeLogo from '@/components/admin/유튜브.png';
 import TiktokLogo from '@/components/admin/틱톡.png';
-import NaverLogo from '@/components/admin/네이버블로그.png';
-import FacebookLogo from '@/components/admin/페이스북.png';
-import HomeLogo from '@/components/admin/home.png';
-import EmailLogo from '@/components/admin/email.png';
-import PhoneLogo from '@/components/admin/phone.png';
-import ThreadsLogo from '@/components/admin/threads.png';
-import XLogo from '@/components/admin/x.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
     onUpdate: (links: ContentItem[]) => void;
 }
 
-type SnsKey = 'instagram' | 'youtube' | 'tiktok' | 'naverclip' | 'facebook' | 'homepage' | 'email' | 'phone' | 'threads' | 'x';
+type SnsKey = 'instagram' | 'youtube' | 'tiktok';
 
 const snsPresets: Record<SnsKey, { title: string; url: string; icon: string }> = {
     youtube: { title: '유튜브', url: 'https://www.youtube.com/', icon: YoutubeLogo.src },
     instagram: { title: '인스타그램', url: 'https://www.instagram.com/', icon: InstagramLogo.src },
     tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
-    x: { title: 'X', url: 'https://x.com/', icon: XLogo.src },
-    threads: { title: '쓰레드', url: 'https://www.threads.net/', icon: ThreadsLogo.src },
-    naverclip: { title: '네이버 블로그', url: 'https://m.blog.naver.com/', icon: NaverLogo.src },
-    facebook: { title: '페이스북', url: 'https://www.facebook.com/', icon: FacebookLogo.src },
-    homepage: { title: '홈페이지', url: 'https://', icon: HomeLogo.src },
-    email: { title: '이메일', url: 'mailto:', icon: EmailLogo.src },
-    phone: { title: '전화번호', url: 'tel:', icon: PhoneLogo.src },
 };
 
 const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPresets).map(([key, value]) => ({

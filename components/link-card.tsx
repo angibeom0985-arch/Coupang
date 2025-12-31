@@ -4,13 +4,6 @@ import { ExternalLink } from 'lucide-react';
 import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
 import YoutubeLogo from '@/components/admin/유튜브.png';
 import TiktokLogo from '@/components/admin/틱톡.png';
-import NaverLogo from '@/components/admin/네이버블로그.png';
-import FacebookLogo from '@/components/admin/페이스북.png';
-import HomeLogo from '@/components/admin/home.png';
-import EmailLogo from '@/components/admin/email.png';
-import PhoneLogo from '@/components/admin/phone.png';
-import ThreadsLogo from '@/components/admin/threads.png';
-import XLogo from '@/components/admin/x.png';
 
 interface LinkCardProps {
     item: ContentItem;
@@ -28,13 +21,6 @@ const snsIcons: Record<string, string> = {
     instagram: InstagramLogo.src,
     youtube: YoutubeLogo.src,
     tiktok: TiktokLogo.src,
-    x: XLogo.src,
-    threads: ThreadsLogo.src,
-    naverclip: NaverLogo.src,
-    facebook: FacebookLogo.src,
-    homepage: HomeLogo.src,
-    email: EmailLogo.src,
-    phone: PhoneLogo.src,
 };
 
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
