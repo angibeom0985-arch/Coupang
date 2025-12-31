@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
 
 interface ProfileEditorProps {
     profile: Profile;
@@ -15,6 +16,7 @@ interface ProfileEditorProps {
 
 export function ProfileEditor({ profile, onUpdate }: ProfileEditorProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     return (
         <Card>
@@ -65,8 +67,8 @@ export function ProfileEditor({ profile, onUpdate }: ProfileEditorProps) {
                                     placeholder="https://example.com/image.jpg"
                                 />
                                 <label htmlFor="file-upload" className="cursor-pointer">
-                                    <div className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors whitespace-nowrap">
-                                        파일 선택
+                                    <div className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center">
+                                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : '파일 선택'}
                                     </div>
                                 </label>
                                 <input
@@ -74,38 +76,43 @@ export function ProfileEditor({ profile, onUpdate }: ProfileEditorProps) {
                                     type="file"
                                     accept="image/*"
                                     className="hidden"
+                                    disabled={isUploading}
                                     onChange={async (e) => {
                                         const file = e.target.files?.[0];
                                         if (!file) return;
 
-                                        console.log('파일 선택됨:', file.name, file.type, file.size);
-
-                                        const formData = new FormData();
-                                        formData.append('file', file);
-
+                                        setIsUploading(true);
                                         try {
-                                            console.log('업로드 시작...');
-                                            const response = await fetch('/api/upload', {
-                                                method: 'POST',
-                                                body: formData,
-                                            });
+                                            const timestamp = Date.now();
+                                            // Remove special chars to avoid URL issues
+                                            const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                                            const filename = `${timestamp}_${cleanName}`;
 
-                                            console.log('응답 상태:', response.status);
-                                            const data = await response.json();
-                                            console.log('응답 데이터:', data);
+                                            // 1. Upload to Supabase Storage ('images' bucket)
+                                            const { data, error } = await supabase
+                                                .storage
+                                                .from('images')
+                                                .upload(filename, file, {
+                                                    cacheControl: '3600',
+                                                    upsert: false
+                                                });
 
-                                            if (data.success) {
-                                                onUpdate('avatar', data.url);
-                                                alert('✅ 이미지가 업로드되었습니다!');
-                                                // Reset input
-                                                e.target.value = '';
-                                            } else {
-                                                console.error('업로드 실패:', data.error);
-                                                alert('❌ ' + (data.error || '업로드 실패'));
-                                            }
-                                        } catch (error) {
+                                            if (error) throw error;
+
+                                            // 2. Get Public URL
+                                            const { data: { publicUrl } } = supabase
+                                                .storage
+                                                .from('images')
+                                                .getPublicUrl(filename);
+
+                                            onUpdate('avatar', publicUrl);
+                                            alert('✅ 이미지가 업로드되었습니다!');
+                                            e.target.value = '';
+                                        } catch (error: any) {
                                             console.error('Upload error:', error);
-                                            alert('❌ 업로드 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
+                                            alert('❌ 업로드 실패: ' + (error.message || '알 수 없는 오류'));
+                                        } finally {
+                                            setIsUploading(false);
                                         }
                                     }}
                                 />

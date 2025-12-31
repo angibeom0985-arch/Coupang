@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { getLinksData } from '@/lib/data';
 import type { LinksData } from '@/lib/data';
 import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
 import { AdBanner } from '@/components/ad-banner';
+import { AnalyticsTracker } from '@/components/analytics-tracker';
 
 export default function Home() {
     const [data, setData] = useState<LinksData | null>(null);
@@ -31,6 +32,9 @@ export default function Home() {
 
     return (
         <>
+            <Suspense>
+                <AnalyticsTracker />
+            </Suspense>
             {data.adBanner && <AdBanner text={data.adBanner} />}
 
             <div

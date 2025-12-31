@@ -1,5 +1,5 @@
-import { kv } from '@vercel/kv';
-import linksData from '@/data/links.json';
+import { supabase } from "@/lib/supabase";
+import tempLinksData from '@/data/links.json';
 
 export interface Theme {
     backgroundColor: string;
@@ -41,17 +41,28 @@ export interface LinksData {
     profileEnabled?: boolean;
 }
 
-const DATA_KEY = 'coupang_links_data';
+export const SETTINGS_TABLE = 'settings';
+export const SETTINGS_DOC_ID = 'coupang_links';
 
 export async function getLinksData(): Promise<LinksData> {
     try {
-        const data = await kv.get<LinksData>(DATA_KEY);
+        const { data, error } = await supabase
+            .from(SETTINGS_TABLE)
+            .select('data')
+            .eq('id', SETTINGS_DOC_ID)
+            .single();
+
+        if (error) {
+            console.warn('Supabase fetch error (might be first time):', error.message);
+            // If error is PGRST116 (JSON object requested, multiple (or no) results returned), likely no data
+            return tempLinksData as LinksData;
+        }
+
         if (data) {
-            return data;
+            return data.data as LinksData;
         }
     } catch (error) {
-        console.warn('Failed to fetch from KV, falling back to local data:', error);
+        console.warn('Failed to fetch from Supabase, falling back to local data:', error);
     }
-
-    return linksData as LinksData;
+    return tempLinksData as LinksData;
 }

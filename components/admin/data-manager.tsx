@@ -17,9 +17,42 @@ export function DataManager({ data }: DataManagerProps) {
     React.useEffect(() => {
         const fetchAnalytics = async () => {
             try {
-                const res = await fetch('/api/analytics');
-                const json = await res.json();
-                setAnalytics(json);
+                const { supabase } = await import('@/lib/supabase');
+
+                // Fetch all analytics data (Warning: heavy for large datasets, sufficient for MVP)
+                const { data, error } = await supabase
+                    .from('analytics')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const analyticsData = data || [];
+
+                // Process data for dashboard
+                const totalVisits = analyticsData.length;
+
+                // Daily visits
+                const dailyVisits: Record<string, number> = {};
+                // Referrers
+                const referrers: Record<string, number> = {};
+
+                analyticsData.forEach((item: any) => {
+                    // Date (YYYY-MM-DD)
+                    const date = new Date(item.created_at).toISOString().split('T')[0];
+                    dailyVisits[date] = (dailyVisits[date] || 0) + 1;
+
+                    // Source
+                    const src = item.source || 'direct';
+                    referrers[src] = (referrers[src] || 0) + 1;
+                });
+
+                setAnalytics({
+                    totalVisits,
+                    dailyVisits,
+                    referrers
+                });
+
             } catch (e) {
                 console.error('Failed to load analytics', e);
             }

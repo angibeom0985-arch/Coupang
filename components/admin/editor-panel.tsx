@@ -1,6 +1,4 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { LinksData, ContentItem } from '@/lib/data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +7,6 @@ import { ProfileEditor } from './profile-editor';
 import { LinkEditor } from './link-editor';
 import { ThemeEditor } from './theme-editor';
 import { DataManager } from './data-manager';
-import { Loader2, Check, Cloud } from 'lucide-react';
 
 interface EditorPanelProps {
     data: LinksData;
@@ -18,48 +15,6 @@ interface EditorPanelProps {
 
 export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
     const [debouncedData] = useDebounce(data, 1000);
-    const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    // Auto-save effect
-    useEffect(() => {
-        const saveData = async () => {
-            if (!debouncedData) return;
-
-            setSaveStatus('saving');
-            setErrorMessage(null);
-            try {
-                const response = await fetch('/api/save', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(debouncedData),
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    setSaveStatus('saved');
-                    setLastSaved(new Date());
-                } else {
-                    setSaveStatus('error');
-                    setErrorMessage(result.error || '알 수 없는 오류');
-                    console.error('Save failed:', result.error);
-                }
-            } catch (error) {
-                setSaveStatus('error');
-                setErrorMessage('네트워크 오류가 발생했습니다.');
-                console.error('Save error:', error);
-            }
-        };
-
-        // Only save if data has been loaded and initialized
-        if (debouncedData) {
-            saveData();
-        }
-    }, [debouncedData]);
 
     const updateProfile = (key: string, value: any) => {
         onDataChange({
@@ -102,35 +57,6 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
         <div className="h-full flex flex-col bg-background">
             <div className="border-b px-6 py-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold">편집 패널</h2>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {saveStatus === 'saving' && (
-                        <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>저장 중...</span>
-                        </>
-                    )}
-                    {saveStatus === 'saved' && (
-                        <>
-                            <Cloud className="w-4 h-4 text-blue-500" />
-                            <span>자동 저장됨</span>
-                            {lastSaved && (
-                                <span className="text-xs text-muted-foreground/50 ml-1">
-                                    {lastSaved.toLocaleTimeString()}
-                                </span>
-                            )}
-                        </>
-                    )}
-                    {saveStatus === 'error' && (
-                        <div className="flex items-center text-red-500 gap-1">
-                            <span>❌ 저장 실패</span>
-                            {errorMessage && (
-                                <span className="text-xs bg-red-100 px-2 py-0.5 rounded-full max-w-[200px] truncate" title={errorMessage}>
-                                    {errorMessage}
-                                </span>
-                            )}
-                        </div>
-                    )}
-                </div>
             </div>
 
             <Tabs defaultValue="page" className="flex-1 flex flex-col">
