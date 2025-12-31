@@ -45,10 +45,10 @@ export default async function RootLayout({
 
     return (
         <html lang="ko">
-            <head>
+            <body className={inter.className}>
                 {customHeadCode ? parse(customHeadCode) : null}
-            </head>
-            <body className={inter.className}>{children}</body>
+                {children}
+            </body>
         </html>
     );
 }
