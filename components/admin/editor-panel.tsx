@@ -143,7 +143,20 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         />
                     </TabsContent>
 
-                    <TabsContent value="design" className="m-0 p-6">
+                    <TabsContent value="design" className="m-0 p-6 space-y-6">
+                        <div className="p-4 bg-muted/50 rounded-lg border">
+                            <label className="text-sm font-medium mb-2 block">
+                                📢 상단 광고 배너 문구
+                            </label>
+                            <input
+                                type="text"
+                                value={data.adBanner || ''}
+                                onChange={(e) => updateAdBanner(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="오른쪽에서 왼쪽으로 흐르는 광고 문구를 입력하세요"
+                            />
+                        </div>
+
                         <ThemeEditor
                             theme={data.profile.theme}
                             onUpdate={updateTheme}
