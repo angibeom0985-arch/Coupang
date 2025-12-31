@@ -7,6 +7,8 @@ interface LinkCardProps {
         buttonColor: string;
         buttonTextColor: string;
         buttonStyle: 'rounded' | 'square' | 'pill';
+        buttonBorderColor?: string;
+        textBorderColor?: string;
     };
 }
 
@@ -24,6 +26,10 @@ export function LinkCard({ item, theme }: LinkCardProps) {
     const buttonStyle = {
         backgroundColor: theme.buttonColor,
         color: theme.buttonTextColor,
+        border: theme.buttonBorderColor ? `2px solid ${theme.buttonBorderColor}` : '2px solid transparent',
+        textShadow: theme.textBorderColor ?
+            `-1px -1px 0 ${theme.textBorderColor}, 1px -1px 0 ${theme.textBorderColor}, -1px 1px 0 ${theme.textBorderColor}, 1px 1px 0 ${theme.textBorderColor}`
+            : 'none',
     };
 
     const roundedClass =

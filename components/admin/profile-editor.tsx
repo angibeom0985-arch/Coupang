@@ -9,30 +9,43 @@ import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 
+import { Switch } from '@/components/ui/switch';
+
 interface ProfileEditorProps {
     profile: Profile;
     onUpdate: (key: string, value: string) => void;
+    enabled: boolean;
+    onToggle: (enabled: boolean) => void;
 }
 
-export function ProfileEditor({ profile, onUpdate }: ProfileEditorProps) {
+export function ProfileEditor({ profile, onUpdate, enabled, onToggle }: ProfileEditorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
     return (
-        <Card>
+        <Card className={!enabled ? 'opacity-75' : ''}>
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xl font-bold">프로필 설정</CardTitle>
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm" className="w-9 p-0">
-                            {isOpen ? (
-                                <ChevronUp className="h-4 w-4" />
-                            ) : (
-                                <ChevronDown className="h-4 w-4" />
-                            )}
-                            <span className="sr-only">Toggle</span>
-                        </Button>
-                    </CollapsibleTrigger>
+                    <div className="flex items-center gap-4">
+                        <CardTitle className="text-xl font-bold">프로필 설정</CardTitle>
+                        <Switch
+                            checked={enabled}
+                            onCheckedChange={onToggle}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
+                    {enabled && (
+                        <CollapsibleTrigger asChild>
+                            <Button variant="ghost" size="sm" className="w-9 p-0">
+                                {isOpen ? (
+                                    <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                    <ChevronDown className="h-4 w-4" />
+                                )}
+                                <span className="sr-only">Toggle</span>
+                            </Button>
+                        </CollapsibleTrigger>
+                    )}
                 </CardHeader>
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">

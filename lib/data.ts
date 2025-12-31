@@ -7,6 +7,8 @@ export interface Theme {
     buttonColor: string;
     buttonTextColor: string;
     buttonStyle: 'rounded' | 'square' | 'pill';
+    buttonBorderColor?: string;
+    textBorderColor?: string;
 }
 
 export interface Profile {

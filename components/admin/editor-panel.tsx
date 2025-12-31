@@ -105,27 +105,14 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                             </div>
 
                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
-                                    <label className="text-sm font-medium">
-                                        프로필 설정
-                                    </label>
-                                    <Switch
-                                        checked={data.profileEnabled !== false}
-                                        onCheckedChange={(checked) => onDataChange({ ...data, profileEnabled: checked })}
-                                    />
-                                </div>
-                                {data.profileEnabled !== false && (
-                                    <ProfileEditor
-                                        profile={data.profile}
-                                        onUpdate={updateProfile}
-                                    />
-                                )}
+                                <ProfileEditor
+                                    profile={data.profile}
+                                    onUpdate={updateProfile}
+                                    enabled={data.profileEnabled !== false}
+                                    onToggle={(checked) => onDataChange({ ...data, profileEnabled: checked })}
+                                />
                             </div>
                         </div>
-                        <LinkEditor
-                            links={data.links}
-                            onUpdate={updateLinks}
-                        />
                         <LinkEditor
                             links={data.links}
                             onUpdate={updateLinks}
