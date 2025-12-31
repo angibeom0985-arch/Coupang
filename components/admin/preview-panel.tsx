@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { LinksData } from '@/lib/data';
 import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
 import { Smartphone } from 'lucide-react';
-
 import { AdBanner } from '@/components/ad-banner';
 
 interface PreviewPanelProps {
@@ -13,13 +11,13 @@ interface PreviewPanelProps {
 }
 
 export function PreviewPanel({ data }: PreviewPanelProps) {
-    const enabledLinks = data.links.filter(link => link.enabled);
+    const enabledLinks = data.links.filter((link) => link.enabled);
 
     return (
         <div className="h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-slate-100 to-slate-200">
             <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
                 <Smartphone className="w-4 h-4" />
-                <span>실시간 미리보기</span>
+                <span>미리보기</span>
             </div>
 
             <div className="relative">
@@ -34,8 +32,17 @@ export function PreviewPanel({ data }: PreviewPanelProps) {
                         className="w-full flex-1 overflow-y-auto"
                         style={{ backgroundColor: data.profile.theme.backgroundColor }}
                     >
-                        <div className="py-12 px-6">
-                            <ProfileHeader profile={data.profile} />
+                        <div className="py-12 px-6 space-y-6">
+                            {data.customBodyCode && (
+                                <div
+                                    className="mb-2 overflow-hidden"
+                                    dangerouslySetInnerHTML={{ __html: data.customBodyCode }}
+                                />
+                            )}
+
+                            {data.profileEnabled !== false && (
+                                <ProfileHeader profile={data.profile} />
+                            )}
 
                             <div className="space-y-4">
                                 {enabledLinks.map((item) => (
