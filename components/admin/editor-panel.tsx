@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { LinksData, ContentItem } from '@/lib/data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { ProfileEditor } from './profile-editor';
 import { LinkEditor } from './link-editor';
 import { ThemeEditor } from './theme-editor';
@@ -102,6 +102,30 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     placeholder="오른쪽에서 왼쪽으로 흐르는 광고 문구를 입력하세요"
                                 />
+                            </div>
+
+                            <div className="p-4 bg-muted/50 rounded-lg border">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="space-y-2 flex-1">
+                                        <label className="text-sm font-medium block">
+                                            🔍 검색창 표시
+                                        </label>
+                                        <p className="text-sm text-muted-foreground">
+                                            링크/텍스트를 제목으로 찾을 수 있는 검색 입력창을 표시합니다.
+                                        </p>
+                                        {data.searchEnabled && (
+                                            <Input
+                                                value={data.searchPlaceholder || ''}
+                                                onChange={(e) => onDataChange({ ...data, searchPlaceholder: e.target.value })}
+                                                placeholder="검색어를 입력하세요"
+                                            />
+                                        )}
+                                    </div>
+                                    <Switch
+                                        checked={data.searchEnabled === true}
+                                        onCheckedChange={(checked) => onDataChange({ ...data, searchEnabled: checked })}
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-4">

@@ -45,6 +45,8 @@ export interface LinksData {
     customHeadCode?: string;
     customBodyCode?: string;
     faviconUrl?: string;
+    searchEnabled?: boolean;
+    searchPlaceholder?: string;
 }
 
 export const SETTINGS_TABLE = 'settings';

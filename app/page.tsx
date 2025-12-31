@@ -7,9 +7,12 @@ import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
 import { AdBanner } from '@/components/ad-banner';
 import { AnalyticsTracker } from '@/components/analytics-tracker';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 export default function Home() {
     const [data, setData] = useState<LinksData | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         // Load initial data
@@ -29,6 +32,19 @@ export default function Home() {
     }
 
     const enabledLinks = data.links.filter(link => link.enabled);
+    const showSearch = data.searchEnabled === true;
+    const filteredLinks = enabledLinks.filter((item) => {
+        if (!showSearch) return true;
+
+        const query = searchQuery.trim().toLowerCase();
+        if (!query) return true;
+
+        if (item.type === 'link') {
+            return item.title.toLowerCase().includes(query);
+        }
+
+        return item.content.toLowerCase().includes(query);
+    });
 
     return (
         <>
@@ -54,8 +70,20 @@ export default function Home() {
                         <ProfileHeader profile={data.profile} />
                     )}
 
+                    {showSearch && (
+                        <div className="relative mt-6">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={data.searchPlaceholder || '검색어를 입력하세요'}
+                                className="pl-9"
+                            />
+                        </div>
+                    )}
+
                     <div className="space-y-4 mt-8">
-                        {enabledLinks.map((item) => (
+                        {filteredLinks.map((item) => (
                             <LinkCard key={item.id} item={item} theme={data.profile.theme} />
                         ))}
                     </div>

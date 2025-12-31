@@ -1,17 +1,34 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { LinksData } from '@/lib/data';
 import { ProfileHeader } from '@/components/profile-header';
 import { LinkCard } from '@/components/link-card';
-import { Smartphone } from 'lucide-react';
+import { Smartphone, Search } from 'lucide-react';
 import { AdBanner } from '@/components/ad-banner';
+import { Input } from '@/components/ui/input';
 
 interface PreviewPanelProps {
     data: LinksData;
 }
 
 export function PreviewPanel({ data }: PreviewPanelProps) {
+    const [searchQuery, setSearchQuery] = useState('');
     const enabledLinks = data.links.filter((link) => link.enabled);
+    const showSearch = data.searchEnabled === true;
+    const filteredLinks = useMemo(() => {
+        if (!showSearch) return enabledLinks;
+
+        const query = searchQuery.trim().toLowerCase();
+        if (!query) return enabledLinks;
+
+        return enabledLinks.filter((item) => {
+            if (item.type === 'link') {
+                return item.title.toLowerCase().includes(query);
+            }
+            return item.content.toLowerCase().includes(query);
+        });
+    }, [enabledLinks, searchQuery, showSearch]);
 
     return (
         <div className="h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-slate-100 to-slate-200">
@@ -44,8 +61,20 @@ export function PreviewPanel({ data }: PreviewPanelProps) {
                                 <ProfileHeader profile={data.profile} />
                             )}
 
+                            {showSearch && (
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={data.searchPlaceholder || '검색어를 입력하세요'}
+                                        className="pl-9 bg-white/80"
+                                    />
+                                </div>
+                            )}
+
                             <div className="space-y-4">
-                                {enabledLinks.map((item) => (
+                                {filteredLinks.map((item) => (
                                     <LinkCard key={item.id} item={item} theme={data.profile.theme} />
                                 ))}
                             </div>

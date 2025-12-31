@@ -51,5 +51,7 @@
             "icon": "ticket",
             "enabled": true
         }
-    ]
+    ],
+    "searchEnabled": false,
+    "searchPlaceholder": "링크 검색"
 }
