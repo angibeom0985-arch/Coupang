@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
 import { useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "관리자 페이지",
+};
 
 export default function AdminLayout({
     children,
