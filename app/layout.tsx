@@ -1,9 +1,15 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getLinksData } from "@/lib/data";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
     const data = await getLinksData();
@@ -24,11 +30,6 @@ export async function generateMetadata(): Promise<Metadata> {
             card: "summary_large_image",
             title: title,
             description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
-        },
-        viewport: {
-            width: "device-width",
-            initialScale: 1,
-            maximumScale: 1,
         },
     };
 }

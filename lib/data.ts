@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import tempLinksData from '@/data/links.json';
 
 export interface Theme {
@@ -50,6 +50,11 @@ export const SETTINGS_TABLE = 'settings';
 export const SETTINGS_DOC_ID = 'coupang_links';
 
 export async function getLinksData(): Promise<LinksData> {
+    if (!isSupabaseConfigured) {
+        console.warn('Supabase not configured, returning local backup data.');
+        return tempLinksData as LinksData;
+    }
+
     try {
         const { data, error } = await supabase
             .from(SETTINGS_TABLE)
