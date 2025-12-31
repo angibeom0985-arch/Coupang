@@ -44,6 +44,7 @@ export interface LinksData {
     siteTitle?: string;
     customHeadCode?: string;
     customBodyCode?: string;
+    faviconUrl?: string;
 }
 
 export const SETTINGS_TABLE = 'settings';

@@ -123,6 +123,8 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         <ThemeEditor
                             theme={data.profile.theme}
                             onUpdate={updateTheme}
+                            faviconUrl={data.faviconUrl}
+                            onFaviconUpdate={(url) => onDataChange({ ...data, faviconUrl: url })}
                         />
                     </TabsContent>
 
