@@ -53,7 +53,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
 
                     {showBanner && (
                         <AdBanner
-                            text={data.adBanner}
+                            text={data.adBanner || ""}
                             background={data.adBannerBackground}
                             textColor={data.adBannerTextColor}
                         />
