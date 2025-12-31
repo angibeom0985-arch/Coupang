@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Profile } from '@/lib/data';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -58,7 +58,7 @@ export function ProfileEditor({ profile, onUpdate, enabled, onToggle }: ProfileE
         e.target.value = '';
     };
 
-    const layoutOptions: { key: Profile['profileLayout']; label: string; icon: JSX.Element }[] = [
+    const layoutOptions: { key: Profile['profileLayout']; label: string; icon: React.ReactNode }[] = [
         { key: 'avatar', label: '프로필만', icon: <UserCircle2 className="w-5 h-5" /> },
         { key: 'cover', label: '배경만', icon: <PictureInPicture2 className="w-5 h-5" /> },
         { key: 'both', label: '프로필+배경', icon: <ImageIcon className="w-5 h-5" /> },
