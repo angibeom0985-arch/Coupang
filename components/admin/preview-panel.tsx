@@ -10,10 +10,13 @@ import { Input } from '@/components/ui/input';
 
 interface PreviewPanelProps {
     data: LinksData;
+    onReorder?: (sourceId: string, targetId: string) => void;
 }
 
-export function PreviewPanel({ data }: PreviewPanelProps) {
+export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [draggingId, setDraggingId] = useState<string | null>(null);
+    const [dragOverId, setDragOverId] = useState<string | null>(null);
     const enabledLinks = data.links.filter((link) => link.enabled);
     const showSearch = data.searchEnabled === true;
     const filteredLinks = useMemo(() => {
@@ -74,9 +77,42 @@ export function PreviewPanel({ data }: PreviewPanelProps) {
                             )}
 
                             <div className="space-y-4">
-                                {filteredLinks.map((item) => (
-                                    <LinkCard key={item.id} item={item} theme={data.profile.theme} />
-                                ))}
+                                {filteredLinks.map((item) => {
+                                    const isDragging = draggingId === item.id;
+                                    const isDragOver = dragOverId === item.id;
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            draggable={!!onReorder}
+                                            onDragStart={() => {
+                                                setDraggingId(item.id);
+                                                setDragOverId(item.id);
+                                            }}
+                                            onDragOver={(e) => {
+                                                if (!onReorder) return;
+                                                e.preventDefault();
+                                                if (dragOverId !== item.id) {
+                                                    setDragOverId(item.id);
+                                                }
+                                            }}
+                                            onDrop={(e) => {
+                                                e.preventDefault();
+                                                if (onReorder && draggingId && draggingId !== item.id) {
+                                                    onReorder(draggingId, item.id);
+                                                }
+                                                setDragOverId(null);
+                                                setDraggingId(null);
+                                            }}
+                                            onDragEnd={() => {
+                                                setDragOverId(null);
+                                                setDraggingId(null);
+                                            }}
+                                            className={`transition-transform ${isDragging ? 'opacity-70' : ''} ${isDragOver && !isDragging ? 'ring-2 ring-primary/60 ring-offset-2 ring-offset-white' : ''}`}
+                                        >
+                                            <LinkCard key={item.id} item={item} theme={data.profile.theme} />
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

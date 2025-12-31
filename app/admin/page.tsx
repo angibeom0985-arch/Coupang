@@ -10,10 +10,12 @@ import { SETTINGS_TABLE, SETTINGS_DOC_ID } from '@/lib/data';
 import { Loader2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
 
 export default function AdminPage() {
     const [data, setData] = useState<LinksData | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [debouncedData] = useDebounce(data, 1500);
     const router = useRouter();
 
     useEffect(() => {
@@ -25,7 +27,8 @@ export default function AdminPage() {
         loadData();
     }, []);
 
-    const handleSave = async () => {
+    const saveData = async (options?: { silent?: boolean }) => {
+        const silent = options?.silent ?? false;
         if (!data || isSaving) return;
 
         setIsSaving(true);
@@ -33,8 +36,10 @@ export default function AdminPage() {
             // Check session just in case
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                alert('로그인이 만료되었습니다.');
-                router.push('/admin/login');
+                if (!silent) {
+                    alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+                    router.push('/admin/login');
+                }
                 return;
             }
 
@@ -48,14 +53,40 @@ export default function AdminPage() {
 
             if (error) throw error;
 
-            alert('저장이 완료되었습니다.');
+            if (!silent) {
+                alert('저장되었습니다.');
+            }
         } catch (error: any) {
             console.error('Save failed:', error);
-            alert('저장에 실패했습니다: ' + error.message);
+            if (!silent) {
+                alert('저장에 실패했습니다: ' + error.message);
+            }
         } finally {
             setIsSaving(false);
         }
     };
+
+    useEffect(() => {
+        if (!debouncedData) return;
+        // 데이터 변경 후 자동 저장 (조용히)
+        saveData({ silent: true });
+    }, [debouncedData]);
+
+    const handleReorder = (sourceId: string, targetId: string) => {
+        setData((prev) => {
+            if (!prev) return prev;
+            const links = [...prev.links];
+            const fromIndex = links.findIndex((l) => l.id === sourceId);
+            const toIndex = links.findIndex((l) => l.id === targetId);
+            if (fromIndex === -1 || toIndex === -1) return prev;
+
+            const [moved] = links.splice(fromIndex, 1);
+            links.splice(toIndex, 0, moved);
+            return { ...prev, links };
+        });
+    };
+
+    const handleSave = () => saveData({ silent: false });
 
     if (!data) {
         return (
@@ -102,7 +133,7 @@ export default function AdminPage() {
             <div className="flex-1 flex overflow-hidden">
                 {/* Left: Preview */}
                 <div className="w-1/2 border-r">
-                    <PreviewPanel data={data} />
+                    <PreviewPanel data={data} onReorder={handleReorder} />
                 </div>
 
                 {/* Right: Editor */}
