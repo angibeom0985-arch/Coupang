@@ -49,8 +49,9 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
     const bannerTextColors = ['#0f172a', '#ffffff', '#334155', '#f97316'];
     const bannerBgColors = ['#fde68a', '#fca5a5', '#d9f99d', '#c7d2fe', '#0f172a', '#f97316'];
 
-    const renderBannerCard = (options?: { showColors?: boolean }) => {
+    const renderBannerCard = (options?: { showColors?: boolean; showPreview?: boolean }) => {
         const showColors = options?.showColors !== false;
+        const showPreview = options?.showPreview !== false;
         return (
             <div className="p-4 bg-muted/50 rounded-lg border space-y-4">
                 <div className="flex items-start justify-between gap-4">
@@ -111,11 +112,13 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         </div>
                     </div>
                 )}
-                <div className="p-3 rounded-lg border flex items-center gap-3" style={{ backgroundColor: data.adBannerBackground || '#f97316' }}>
-                    <span className="text-sm font-medium" style={{ color: data.adBannerTextColor || '#ffffff' }}>
-                        {data.adBanner || '배너 문구를 입력하세요.'}
-                    </span>
-                </div>
+                {showPreview && (
+                    <div className="p-3 rounded-lg border flex items-center gap-3" style={{ backgroundColor: data.adBannerBackground || '#f97316' }}>
+                        <span className="text-sm font-medium" style={{ color: data.adBannerTextColor || '#ffffff' }}>
+                            {data.adBanner || '배너 문구를 입력하세요.'}
+                        </span>
+                    </div>
+                )}
             </div>
         );
     };
@@ -157,7 +160,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                 <div className="flex-1 overflow-y-auto">
                     <TabsContent value="page" className="m-0 p-6 space-y-6">
                         <div className="space-y-4">
-                            {renderBannerCard({ showColors: false })}
+                            {renderBannerCard({ showColors: false, showPreview: false })}
 
                             <div className="p-4 bg-muted/50 rounded-lg border">
                                 <div className="flex items-start justify-between gap-4">
