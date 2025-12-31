@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
 import { useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
-
-export const metadata: Metadata = {
-    title: "관리자 페이지",
-};
 
 export default function AdminLayout({
     children,
@@ -20,6 +15,8 @@ export default function AdminLayout({
     const pathname = usePathname();
 
     useEffect(() => {
+        document.title = '관리자 페이지';
+
         const checkUser = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session && pathname !== "/admin/login") {

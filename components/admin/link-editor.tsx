@@ -13,15 +13,18 @@ import {
     Plus,
     MoveUp,
     MoveDown,
-    Instagram,
-    Youtube,
-    Music4,
-    Globe2,
-    Facebook,
-    Mail,
-    Phone,
     X
 } from 'lucide-react';
+import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
+import YoutubeLogo from '@/components/admin/유튜브.png';
+import TiktokLogo from '@/components/admin/틱톡.png';
+import NaverLogo from '@/components/admin/네이버블로그.png';
+import FacebookLogo from '@/components/admin/페이스북.png';
+import HomeLogo from '@/components/admin/home.png';
+import EmailLogo from '@/components/admin/email.png';
+import PhoneLogo from '@/components/admin/phone.png';
+import ThreadsLogo from '@/components/admin/threads.png';
+import XLogo from '@/components/admin/x.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
@@ -30,17 +33,17 @@ interface LinkEditorProps {
 
 type SnsKey = 'instagram' | 'youtube' | 'tiktok' | 'naverclip' | 'facebook' | 'homepage' | 'email' | 'phone' | 'threads' | 'x';
 
-const snsPresets: Record<SnsKey, { title: string; url: string; icon: React.ReactNode }> = {
-    youtube: { title: '유튜브', url: 'https://www.youtube.com/', icon: <Youtube className="w-4 h-4" /> },
-    instagram: { title: '인스타그램', url: 'https://www.instagram.com/', icon: <Instagram className="w-4 h-4" /> },
-    tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: <Music4 className="w-4 h-4" /> },
-    x: { title: 'X', url: 'https://x.com/', icon: <Globe2 className="w-4 h-4" /> },
-    threads: { title: '쓰레드', url: 'https://www.threads.net/', icon: <Globe2 className="w-4 h-4" /> },
-    naverclip: { title: '네이버 블로그', url: 'https://m.blog.naver.com/', icon: <Globe2 className="w-4 h-4" /> },
-    facebook: { title: '페이스북', url: 'https://www.facebook.com/', icon: <Facebook className="w-4 h-4" /> },
-    homepage: { title: '홈페이지', url: 'https://', icon: <Globe2 className="w-4 h-4" /> },
-    email: { title: '이메일', url: 'mailto:', icon: <Mail className="w-4 h-4" /> },
-    phone: { title: '전화번호', url: 'tel:', icon: <Phone className="w-4 h-4" /> },
+const snsPresets: Record<SnsKey, { title: string; url: string; icon: string }> = {
+    youtube: { title: '유튜브', url: 'https://www.youtube.com/', icon: YoutubeLogo.src },
+    instagram: { title: '인스타그램', url: 'https://www.instagram.com/', icon: InstagramLogo.src },
+    tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
+    x: { title: 'X', url: 'https://x.com/', icon: XLogo.src },
+    threads: { title: '쓰레드', url: 'https://www.threads.net/', icon: ThreadsLogo.src },
+    naverclip: { title: '네이버 블로그', url: 'https://m.blog.naver.com/', icon: NaverLogo.src },
+    facebook: { title: '페이스북', url: 'https://www.facebook.com/', icon: FacebookLogo.src },
+    homepage: { title: '홈페이지', url: 'https://', icon: HomeLogo.src },
+    email: { title: '이메일', url: 'mailto:', icon: EmailLogo.src },
+    phone: { title: '전화번호', url: 'tel:', icon: PhoneLogo.src },
 };
 
 const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPresets).map(([key, value]) => ({
@@ -344,16 +347,15 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                             {Object.entries(snsPresets).map(([key, preset]) => (
                                 <div key={key} className="flex items-center justify-between rounded-lg border px-3 py-2 hover:bg-muted/60 transition">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                                            {preset.icon}
-                                        </div>
+                                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                                        <img src={preset.icon} alt={preset.title} className="w-full h-full object-contain" />
+                                    </div>
                                         <div>
                                             <p className="text-sm font-medium">{preset.title}</p>
                                             <p className="text-xs text-muted-foreground">{preset.url}</p>
                                         </div>
                                     </div>
                                     <Button size="sm" variant="secondary" onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}>
-                                        <Plus className="w-4 h-4 mr-1" />
                                         추가
                                     </Button>
                                 </div>

@@ -1,6 +1,16 @@
 import React from 'react';
 import { ContentItem } from '@/lib/data';
-import { ExternalLink, Instagram, Youtube, Music4, Globe2, Facebook, Mail, Phone, Link2 } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
+import YoutubeLogo from '@/components/admin/유튜브.png';
+import TiktokLogo from '@/components/admin/틱톡.png';
+import NaverLogo from '@/components/admin/네이버블로그.png';
+import FacebookLogo from '@/components/admin/페이스북.png';
+import HomeLogo from '@/components/admin/home.png';
+import EmailLogo from '@/components/admin/email.png';
+import PhoneLogo from '@/components/admin/phone.png';
+import ThreadsLogo from '@/components/admin/threads.png';
+import XLogo from '@/components/admin/x.png';
 
 interface LinkCardProps {
     item: ContentItem;
@@ -14,17 +24,17 @@ interface LinkCardProps {
     adCode?: string;
 }
 
-const snsIcons: Record<string, string | React.ReactNode> = {
-    instagram: <Instagram className="w-5 h-5" />,
-    youtube: <Youtube className="w-5 h-5" />,
-    tiktok: <Music4 className="w-5 h-5" />,
-    x: <Globe2 className="w-5 h-5" />,
-    threads: <Globe2 className="w-5 h-5" />,
-    naverclip: <Globe2 className="w-5 h-5" />,
-    facebook: <Facebook className="w-5 h-5" />,
-    homepage: <Link2 className="w-5 h-5" />,
-    email: <Mail className="w-5 h-5" />,
-    phone: <Phone className="w-5 h-5" />,
+const snsIcons: Record<string, string> = {
+    instagram: InstagramLogo.src,
+    youtube: YoutubeLogo.src,
+    tiktok: TiktokLogo.src,
+    x: XLogo.src,
+    threads: ThreadsLogo.src,
+    naverclip: NaverLogo.src,
+    facebook: FacebookLogo.src,
+    homepage: HomeLogo.src,
+    email: EmailLogo.src,
+    phone: PhoneLogo.src,
 };
 
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
@@ -74,17 +84,12 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                 : 'rounded-2xl';
 
     let iconSrc: string | null = null;
-let iconNode: React.ReactNode | null = null;
     if (item.type === 'link' && item.icon) {
         if (item.icon.startsWith('sns:')) {
             const key = item.icon.replace('sns:', '');
             const asset = snsIcons[key];
             if (asset) {
-                if (typeof asset === 'string') {
-                    iconSrc = asset;
-                } else {
-                    iconNode = asset as React.ReactNode;
-                }
+                iconSrc = asset;
             }
         } else if (item.icon.startsWith('http')) {
             iconSrc = item.icon;
@@ -100,15 +105,9 @@ let iconNode: React.ReactNode | null = null;
             style={buttonStyle}
         >
             <div className="flex items-center gap-3 flex-1 overflow-hidden">
-                {iconSrc || iconNode ? (
+                {iconSrc ? (
                     <div className="w-10 h-10 rounded-md overflow-hidden bg-white/10 flex-shrink-0">
-                        {iconSrc ? (
-                            <img src={iconSrc} alt={item.title} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-white/80">
-                                {iconNode}
-                            </div>
-                        )}
+                        <img src={iconSrc} alt={item.title} className="w-full h-full object-cover" />
                     </div>
                 ) : (
                     <ExternalLink className="w-5 h-5 flex-shrink-0 opacity-70" />
