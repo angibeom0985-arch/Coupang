@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronUp, Image as ImageIcon, Loader2, PictureInPicture2, UserCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
 import { Switch } from '@/components/ui/switch';
 
 interface ProfileEditorProps {
@@ -23,26 +22,25 @@ export function ProfileEditor({ profile, onUpdate, enabled, onToggle }: ProfileE
     const [isOpen, setIsOpen] = useState(false);
     const [isUploading, setIsUploading] = useState<UploadTarget | null>(null);
 
-    const uploadImage = async (file: File, target: UploadTarget) => {
+    const uploadViaApi = async (file: File, target: UploadTarget) => {
         setIsUploading(target);
         try {
-            const timestamp = Date.now();
-            const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-            const filename = `${target}_${timestamp}_${cleanName}`;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', target);
 
-            const { error } = await supabase
-                .storage
-                .from('images')
-                .upload(filename, file, { cacheControl: '3600', upsert: false });
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
 
-            if (error) throw error;
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.error || 'Upload failed');
+            }
 
-            const { data: { publicUrl } } = supabase
-                .storage
-                .from('images')
-                .getPublicUrl(filename);
-
-            onUpdate(target, publicUrl);
+            const { url } = await res.json();
+            onUpdate(target, url);
         } catch (error: any) {
             console.error('Upload error:', error);
             alert('이미지 업로드 실패: ' + (error.message || '잠시 후 다시 시도해 주세요.'));
@@ -54,7 +52,7 @@ export function ProfileEditor({ profile, onUpdate, enabled, onToggle }: ProfileE
     const handleFile = (e: React.ChangeEvent<HTMLInputElement>, target: UploadTarget) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        uploadImage(file, target);
+        uploadViaApi(file, target);
         e.target.value = '';
     };
 

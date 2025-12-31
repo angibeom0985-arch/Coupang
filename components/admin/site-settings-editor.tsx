@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { LinksData } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Loader2, Upload } from 'lucide-react';
 
 interface SiteSettingsEditorProps {
     data: LinksData;
@@ -13,6 +16,34 @@ interface SiteSettingsEditorProps {
 
 export function SiteSettingsEditor({ data, onUpdate }: SiteSettingsEditorProps) {
     const combinedBodyAdCode = data.customBodyCode ?? data.adCode ?? '';
+    const [isUploading, setIsUploading] = useState(false);
+
+    const uploadFavicon = async (file: File) => {
+        setIsUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'favicon');
+
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.error || 'Upload failed');
+            }
+
+            const { url } = await res.json();
+            onUpdate({ faviconUrl: url });
+        } catch (error: any) {
+            console.error('Favicon upload error:', error);
+            alert('파비콘 업로드 실패: ' + (error.message || '잠시 후 다시 시도해 주세요.'));
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -28,19 +59,38 @@ export function SiteSettingsEditor({ data, onUpdate }: SiteSettingsEditorProps) 
                             id="siteTitle"
                             value={data.siteTitle || ''}
                             onChange={(e) => onUpdate({ siteTitle: e.target.value })}
-                            placeholder="내 쿠팡링크 모음"
+                            placeholder="관리자 페이지"
                         />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="favicon">사이트 아이콘/파비콘</Label>
-                        <Input
-                            id="favicon"
-                            value={data.faviconUrl || ''}
-                            onChange={(e) => onUpdate({ faviconUrl: e.target.value })}
-                            placeholder="https://example.com/icon.png"
-                        />
+                        <div className="flex gap-2">
+                            <Input
+                                id="favicon"
+                                value={data.faviconUrl || ''}
+                                onChange={(e) => onUpdate({ faviconUrl: e.target.value })}
+                                placeholder="https://example.com/icon.png"
+                            />
+                            <label className="cursor-pointer flex items-center">
+                                <div className="px-3 py-2 border rounded-md hover:bg-muted transition text-sm flex items-center gap-1">
+                                    {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                    <span>업로드</span>
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    disabled={isUploading}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) uploadFavicon(file);
+                                        e.target.value = '';
+                                    }}
+                                />
+                            </label>
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                            브라우저 탭에 표시될 아이콘 이미지 URL을 입력하세요. (권장: 32x32 또는 64x64)
+                            브라우저 탭에 표시될 아이콘 이미지 URL을 입력하거나 파일을 업로드하세요. (권장: 32x32 또는 64x64)
                         </p>
                     </div>
                 </CardContent>
