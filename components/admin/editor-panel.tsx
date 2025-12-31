@@ -7,6 +7,7 @@ import { ProfileEditor } from './profile-editor';
 import { LinkEditor } from './link-editor';
 import { ThemeEditor } from './theme-editor';
 import { DataManager } from './data-manager';
+import { SiteSettingsEditor } from './site-settings-editor';
 
 interface EditorPanelProps {
     data: LinksData;
@@ -74,10 +75,16 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         🎨 디자인
                     </TabsTrigger>
                     <TabsTrigger
+                        value="settings"
+                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
+                    >
+                        ⚙️ 설정
+                    </TabsTrigger>
+                    <TabsTrigger
                         value="manage"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        ⚙️ 관리
+                        📊 통계
                     </TabsTrigger>
                 </TabsList>
 
@@ -129,6 +136,13 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         <ThemeEditor
                             theme={data.profile.theme}
                             onUpdate={updateTheme}
+                        />
+                    </TabsContent>
+
+                    <TabsContent value="settings" className="m-0 p-6">
+                        <SiteSettingsEditor
+                            data={data}
+                            onUpdate={(updates) => onDataChange({ ...data, ...updates })}
                         />
                     </TabsContent>
 

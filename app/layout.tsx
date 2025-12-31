@@ -1,45 +1,52 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { getLinksData } from "@/lib/data";
+import type { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-    title: "생꿀 | 생활 꿀팁&꿀템",
-    description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
-    keywords: ["소셜미디어", "프로필링크", "꿀팁", "꿀템"],
-    authors: [{ name: "Coupang Link Bio" }],
-    openGraph: {
-        title: "링크 모음 | Link in Bio",
-        description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
-        type: "website",
-        locale: "ko_KR",
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: "링크 모음 | Link in Bio",
-        description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
-    },
-    viewport: {
-        width: "device-width",
-        initialScale: 1,
-        maximumScale: 1,
-    },
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const data = await getLinksData();
+    const title = data.siteTitle || "생꿀 | 생활 꿀팁&꿀템";
 
-export default function RootLayout({
+    return {
+        title: title,
+        description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
+        keywords: ["소셜미디어", "프로필링크", "꿀팁", "꿀템"],
+        authors: [{ name: "Coupang Link Bio" }],
+        openGraph: {
+            title: title,
+            description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
+            type: "website",
+            locale: "ko_KR",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: title,
+            description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
+        },
+        viewport: {
+            width: "device-width",
+            initialScale: 1,
+            maximumScale: 1,
+        },
+    };
+}
+
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const data = await getLinksData();
+    const customHeadCode = data.customHeadCode || '';
+
     return (
         <html lang="ko">
             <head>
-                <script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2686975437928535"
-                    crossOrigin="anonymous"
-                />
+                {customHeadCode && (
+                    <div dangerouslySetInnerHTML={{ __html: customHeadCode }} />
+                )}
             </head>
             <body className={inter.className}>{children}</body>
         </html>

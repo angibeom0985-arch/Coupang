@@ -39,6 +39,9 @@ export interface LinksData {
     links: ContentItem[];
     adBanner?: string;
     profileEnabled?: boolean;
+    siteTitle?: string;
+    customHeadCode?: string;
+    customBodyCode?: string;
 }
 
 export const SETTINGS_TABLE = 'settings';

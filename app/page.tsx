@@ -42,6 +42,14 @@ export default function Home() {
                 style={{ backgroundColor: data.profile.theme.backgroundColor }}
             >
                 <div className="max-w-2xl mx-auto">
+                    {/* Custom Body Code (Display Ads) */}
+                    {data.customBodyCode && (
+                        <div
+                            className="mb-8 overflow-hidden"
+                            dangerouslySetInnerHTML={{ __html: data.customBodyCode }}
+                        />
+                    )}
+
                     {data.profileEnabled !== false && (
                         <ProfileHeader profile={data.profile} />
                     )}
