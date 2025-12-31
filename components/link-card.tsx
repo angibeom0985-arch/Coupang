@@ -1,3 +1,4 @@
+import React from 'react';
 import { ContentItem } from '@/lib/data';
 import { ExternalLink, Instagram, Youtube, Music4, Globe2, Facebook, Mail, Phone, Link2 } from 'lucide-react';
 
@@ -13,7 +14,7 @@ interface LinkCardProps {
     adCode?: string;
 }
 
-const snsIcons: Record<string, string | JSX.Element> = {
+const snsIcons: Record<string, string | React.ReactNode> = {
     instagram: <Instagram className="w-5 h-5" />,
     youtube: <Youtube className="w-5 h-5" />,
     tiktok: <Music4 className="w-5 h-5" />,
