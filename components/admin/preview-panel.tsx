@@ -118,7 +118,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                                                 setDragOverId(null);
                                                 setDraggingId(null);
                                             }}
-                                            className={`transition-transform ${isDragging ? 'opacity-70' : ''} ${isDragOver && !isDragging ? 'ring-2 ring-primary/60 ring-offset-2 ring-offset-white' : ''}`}
+                                            className={`transition-all duration-150 ease-out cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-70 scale-[0.98]' : ''} ${isDragOver && !isDragging ? 'ring-2 ring-primary/60 ring-offset-2 ring-offset-white' : ''}`}
                                         >
                                             <LinkCard
                                                 key={item.id}

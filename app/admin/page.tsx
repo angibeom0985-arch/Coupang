@@ -102,7 +102,7 @@ export default function AdminPage() {
             <header className="border-b bg-background px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">관리 콘솔</h1>
+                        <h1 className="text-2xl font-bold">관리자 페이지</h1>
                     </div>
                     <div className="flex items-center gap-2">
                         <a

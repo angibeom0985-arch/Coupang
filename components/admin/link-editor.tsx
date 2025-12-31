@@ -329,22 +329,19 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
-                        <div className="grid grid-cols-1 gap-2 max-h-[60vh] overflow-y-auto">
+                        <div className="grid grid-cols-5 gap-3 max-h-[60vh] overflow-y-auto">
                             {Object.entries(snsPresets).map(([key, preset]) => (
-                                <div key={key} className="flex items-center justify-between rounded-lg border px-3 py-2 hover:bg-muted/60 transition">
-                                    <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                                <button
+                                    key={key}
+                                    onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
+                                    className="flex flex-col items-center justify-center gap-2 rounded-lg border p-3 hover:bg-muted transition"
+                                    title={preset.title}
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                                         <img src={preset.icon} alt={preset.title} className="w-full h-full object-contain" />
                                     </div>
-                                        <div>
-                                            <p className="text-sm font-medium">{preset.title}</p>
-                                            <p className="text-xs text-muted-foreground">{preset.url}</p>
-                                        </div>
-                                    </div>
-                                    <Button size="sm" variant="secondary" onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}>
-                                        추가
-                                    </Button>
-                                </div>
+                                    <span className="text-xs text-center">{preset.title}</span>
+                                </button>
                             ))}
                         </div>
                     </div>
