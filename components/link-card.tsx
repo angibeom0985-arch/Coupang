@@ -41,10 +41,20 @@ export function LinkCard({ item, theme }: LinkCardProps) {
             className={`group w-full flex items-center justify-between px-6 py-4 ${roundedClass} transition-all hover:scale-[1.02] hover:shadow-lg`}
             style={buttonStyle}
         >
-            <div className="flex items-center gap-3 flex-1">
-                <span className="font-medium text-left">{item.title}</span>
+            <div className="flex items-center gap-3 flex-1 overflow-hidden">
+                {item.icon?.startsWith('http') ? (
+                    <div className="w-10 h-10 rounded-md overflow-hidden bg-white/10 flex-shrink-0">
+                        <img src={item.icon} alt={item.title} className="w-full h-full object-cover" />
+                    </div>
+                ) : (
+                    <ExternalLink className="w-5 h-5 flex-shrink-0 opacity-70" />
+                )}
+                <span className="font-medium text-left truncate">{item.title}</span>
             </div>
-            <ExternalLink className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+            {/* Right Arrow / Icon */}
+            <div className="flex-shrink-0 ml-2">
+                <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+            </div>
         </a>
     );
 }

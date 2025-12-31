@@ -1,6 +1,5 @@
-'use client';
-
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 import { ContentItem } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -111,16 +110,68 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                 <div className="flex-1">
                                     {item.type === 'link' ? (
                                         <div className="space-y-2">
-                                            <Input
-                                                value={item.title}
-                                                onChange={(e) => updateItem(item.id, { title: e.target.value })}
-                                                placeholder="링크 제목"
-                                            />
-                                            <Input
-                                                value={item.url}
-                                                onChange={(e) => updateItem(item.id, { url: e.target.value })}
-                                                placeholder="https://example.com"
-                                            />
+                                            <div className="flex gap-2">
+                                                <div className="flex-1 space-y-2">
+                                                    <Input
+                                                        value={item.title}
+                                                        onChange={(e) => updateItem(item.id, { title: e.target.value })}
+                                                        placeholder="링크 제목"
+                                                    />
+                                                    <Input
+                                                        value={item.url}
+                                                        onChange={(e) => updateItem(item.id, { url: e.target.value })}
+                                                        placeholder="https://example.com"
+                                                    />
+                                                </div>
+                                                <div className="w-20">
+                                                    <label className="cursor-pointer block relative group">
+                                                        <div className={`w-20 h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!item.icon?.startsWith('http') ? 'text-muted-foreground' : ''}`}>
+                                                            {item.icon?.startsWith('http') ? (
+                                                                <img src={item.icon} alt="Icon" className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <span className="text-xs text-center p-1">이미지<br />추가</span>
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs">
+                                                                변경
+                                                            </div>
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="hidden"
+                                                            onChange={async (e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (!file) return;
+
+                                                                try {
+                                                                    const timestamp = Date.now();
+                                                                    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                                                                    const filename = `link_${item.id}_${timestamp}_${cleanName}`;
+
+                                                                    // Upload to Supabase Storage
+                                                                    const { error } = await supabase
+                                                                        .storage
+                                                                        .from('images') // Using same bucket as profile
+                                                                        .upload(filename, file, { cacheControl: '3600', upsert: false });
+
+                                                                    if (error) throw error;
+
+                                                                    // Get Public URL
+                                                                    const { data: { publicUrl } } = supabase
+                                                                        .storage
+                                                                        .from('images')
+                                                                        .getPublicUrl(filename);
+
+                                                                    updateItem(item.id, { icon: publicUrl });
+                                                                } catch (err: any) {
+                                                                    console.error('Upload failed:', err);
+                                                                    alert('이미지 업로드 실패: ' + err.message);
+                                                                }
+                                                            }}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : (
                                         <Textarea
