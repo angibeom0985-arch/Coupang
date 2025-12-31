@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, GripVertical, Link as LinkIcon, Type } from 'lucide-react';
+import { Trash2, Link as LinkIcon, Type } from 'lucide-react';
+import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
+import YoutubeLogo from '@/components/admin/유튜브.png';
+import TiktokLogo from '@/components/admin/틱톡.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
@@ -16,6 +18,25 @@ interface LinkEditorProps {
 
 export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
+
+    const snsIcons: Record<string, any> = {
+        instagram: InstagramLogo,
+        youtube: YoutubeLogo,
+        tiktok: TiktokLogo,
+    };
+
+    const getIconSrc = (icon?: string) => {
+        if (!icon) return null;
+        if (icon.startsWith('sns:')) {
+            const key = icon.replace('sns:', '');
+            const asset = snsIcons[key];
+            if (asset) {
+                return typeof asset === 'string' ? asset : asset.src;
+            }
+        }
+        if (icon.startsWith('http')) return icon;
+        return null;
+    };
 
     const addLink = () => {
         const newLink: ContentItem = {
@@ -42,14 +63,13 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     };
 
     const addAdNote = () => {
-        const newText: ContentItem = {
+        const newAd: ContentItem = {
             id: Date.now().toString(),
-            type: 'text',
-            content: '⚠️ 광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.',
+            type: 'ad',
             enabled: true,
         };
-        onUpdate([...links, newText]);
-        setEditingId(newText.id);
+        onUpdate([...links, newAd]);
+        setEditingId(newAd.id);
         alert('설정 > 광고 코드에 스크립트를 먼저 넣어 주세요.');
     };
 
@@ -82,7 +102,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
             type: 'link',
             title: `${preset.title} 프로필`,
             url: preset.url,
-            icon: 'link',
+            icon: `sns:${key}`,
             enabled: true,
         };
         onUpdate([...links, newLink]);
@@ -179,9 +199,9 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                 </div>
                                                 <div className="w-20">
                                                     <label className="cursor-pointer block relative group">
-                                                        <div className={`w-20 h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!item.icon?.startsWith('http') ? 'text-muted-foreground' : ''}`}>
-                                                            {item.icon?.startsWith('http') ? (
-                                                                <img src={item.icon} alt="Icon" className="w-full h-full object-cover" />
+                                                        <div className={`w-20 h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!getIconSrc(item.icon) ? 'text-muted-foreground' : ''}`}>
+                                                            {getIconSrc(item.icon) ? (
+                                                                <img src={getIconSrc(item.icon) as string} alt="Icon" className="w-full h-full object-cover" />
                                                             ) : (
                                                                 <span className="text-xs text-center p-1">이미지<br />추가</span>
                                                             )}
@@ -227,13 +247,20 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                 </div>
                                             </div>
                                         </div>
-                                    ) : (
+                                    ) : item.type === 'text' ? (
                                         <Textarea
                                             value={item.content}
                                             onChange={(e) => updateItem(item.id, { content: e.target.value })}
                                             placeholder="텍스트 내용"
                                             rows={2}
                                         />
+                                    ) : (
+                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex items-start gap-2">
+                                            ⚠️
+                                            <span>
+                                                광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
 
@@ -253,7 +280,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                             </div>
 
                             <div className="text-xs text-muted-foreground">
-                                {item.type === 'link' ? '🔗 단일 링크' : '📝 텍스트'}
+                                {item.type === 'link' ? '🔗 단일 링크' : item.type === 'text' ? '📝 텍스트' : '📢 광고 영역'}
                                 {' · '}
                                 {item.enabled ? '활성화' : '비활성화'}
                             </div>

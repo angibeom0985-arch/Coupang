@@ -34,6 +34,29 @@ export function SiteSettingsEditor({ data, onUpdate }: SiteSettingsEditorProps) 
 
             <Card>
                 <CardHeader>
+                    <CardTitle>광고 코드</CardTitle>
+                    <CardDescription>광고 섹션에 삽입할 HTML/스크립트 코드를 입력하세요.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="adCode">광고 코드</Label>
+                        <Textarea
+                            id="adCode"
+                            value={data.adCode || ''}
+                            onChange={(e) => onUpdate({ adCode: e.target.value })}
+                            placeholder="<div>광고 코드</div>"
+                            rows={6}
+                            className="font-mono text-xs"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            광고 섹션을 추가하면 여기에 입력한 코드가 노출됩니다.
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
                     <CardTitle>고급 설정 (스크립트/광고)</CardTitle>
                     <CardDescription>
                         외부 스크립트나 광고 코드를 삽입합니다.

@@ -43,7 +43,12 @@ export default function Home() {
             return item.title.toLowerCase().includes(query);
         }
 
-        return item.content.toLowerCase().includes(query);
+        if (item.type === 'text') {
+            return item.content.toLowerCase().includes(query);
+        }
+
+        // 광고는 검색에 제외/항상 표시
+        return true;
     });
 
     return (
@@ -84,7 +89,12 @@ export default function Home() {
 
                     <div className="space-y-4 mt-8">
                         {filteredLinks.map((item) => (
-                            <LinkCard key={item.id} item={item} theme={data.profile.theme} />
+                            <LinkCard
+                                key={item.id}
+                                item={item}
+                                theme={data.profile.theme}
+                                adCode={data.adCode}
+                            />
                         ))}
                     </div>
                 </div>

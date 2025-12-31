@@ -29,7 +29,10 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
             if (item.type === 'link') {
                 return item.title.toLowerCase().includes(query);
             }
-            return item.content.toLowerCase().includes(query);
+            if (item.type === 'text') {
+                return item.content.toLowerCase().includes(query);
+            }
+            return true;
         });
     }, [enabledLinks, searchQuery, showSearch]);
 
@@ -109,7 +112,12 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                                             }}
                                             className={`transition-transform ${isDragging ? 'opacity-70' : ''} ${isDragOver && !isDragging ? 'ring-2 ring-primary/60 ring-offset-2 ring-offset-white' : ''}`}
                                         >
-                                            <LinkCard key={item.id} item={item} theme={data.profile.theme} />
+                                            <LinkCard
+                                                key={item.id}
+                                                item={item}
+                                                theme={data.profile.theme}
+                                                adCode={data.adCode}
+                                            />
                                         </div>
                                     );
                                 })}

@@ -31,10 +31,18 @@ export interface TextItem {
     id: string;
     type: 'text';
     content: string;
+    icon?: string;
     enabled: boolean;
 }
 
-export type ContentItem = LinkItem | TextItem;
+export interface AdItem {
+    id: string;
+    type: 'ad';
+    icon?: string;
+    enabled: boolean;
+}
+
+export type ContentItem = LinkItem | TextItem | AdItem;
 
 export interface LinksData {
     profile: Profile;
@@ -47,6 +55,7 @@ export interface LinksData {
     faviconUrl?: string;
     searchEnabled?: boolean;
     searchPlaceholder?: string;
+    adCode?: string;
 }
 
 export const SETTINGS_TABLE = 'settings';

@@ -1,5 +1,8 @@
 import { ContentItem } from '@/lib/data';
-import { ExternalLink, MessageSquare } from 'lucide-react';
+import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
+import YoutubeLogo from '@/components/admin/유튜브.png';
+import TiktokLogo from '@/components/admin/틱톡.png';
+import { ExternalLink } from 'lucide-react';
 
 interface LinkCardProps {
     item: ContentItem;
@@ -10,9 +13,32 @@ interface LinkCardProps {
         buttonBorderColor?: string;
         textBorderColor?: string;
     };
+    adCode?: string;
 }
 
-export function LinkCard({ item, theme }: LinkCardProps) {
+const snsIcons: Record<string, any> = {
+    instagram: InstagramLogo,
+    youtube: YoutubeLogo,
+    tiktok: TiktokLogo,
+    naverclip: null, // no logo asset provided
+};
+
+export function LinkCard({ item, theme, adCode }: LinkCardProps) {
+    if (item.type === 'ad') {
+        return (
+            <div className="w-full rounded-2xl border border-dashed border-amber-300 bg-amber-50 text-amber-800 p-4 text-sm text-center">
+                {adCode ? (
+                    <div
+                        className="w-full h-full overflow-hidden"
+                        dangerouslySetInnerHTML={{ __html: adCode }}
+                    />
+                ) : (
+                    '광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.'
+                )}
+            </div>
+        );
+    }
+
     if (item.type === 'text') {
         return (
             <div className="w-full text-center py-4">
@@ -39,6 +65,19 @@ export function LinkCard({ item, theme }: LinkCardProps) {
                 ? 'rounded-none'
                 : 'rounded-2xl';
 
+    let iconSrc: string | null = null;
+    if (item.type === 'link' && item.icon) {
+        if (item.icon.startsWith('sns:')) {
+            const key = item.icon.replace('sns:', '');
+            const asset = snsIcons[key];
+            if (asset) {
+                iconSrc = typeof asset === 'string' ? asset : asset.src;
+            }
+        } else if (item.icon.startsWith('http')) {
+            iconSrc = item.icon;
+        }
+    }
+
     return (
         <a
             href={item.url}
@@ -48,9 +87,9 @@ export function LinkCard({ item, theme }: LinkCardProps) {
             style={buttonStyle}
         >
             <div className="flex items-center gap-3 flex-1 overflow-hidden">
-                {item.icon?.startsWith('http') ? (
+                {iconSrc ? (
                     <div className="w-10 h-10 rounded-md overflow-hidden bg-white/10 flex-shrink-0">
-                        <img src={item.icon} alt={item.title} className="w-full h-full object-cover" />
+                        <img src={iconSrc} alt={item.title} className="w-full h-full object-cover" />
                     </div>
                 ) : (
                     <ExternalLink className="w-5 h-5 flex-shrink-0 opacity-70" />
