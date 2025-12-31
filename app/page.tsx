@@ -58,7 +58,7 @@ export default function Home() {
             </Suspense>
             {showBanner && (
                 <AdBanner
-                    text={data.adBanner}
+                    text={data.adBanner || ''}
                     background={data.adBannerBackground}
                     textColor={data.adBannerTextColor}
                 />
