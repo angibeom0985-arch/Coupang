@@ -60,7 +60,7 @@ export async function getLinksData(): Promise<LinksData> {
             .from(SETTINGS_TABLE)
             .select('data')
             .eq('id', SETTINGS_DOC_ID)
-            .single();
+            .maybeSingle();
 
         if (error) {
             console.warn('Supabase fetch error (might be first time):', error.message);
