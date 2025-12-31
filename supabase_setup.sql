@@ -44,3 +44,14 @@ create policy "Admins can view analytics"
 -- 3. Storage Bucket for images
 -- Go to Storage > Create a new bucket named 'images'
 -- Make it Public
+
+-- Storage RLS Policies for the 'images' bucket
+-- Allow anyone to view files in the public bucket
+create policy if not exists "Public can read images"
+  on storage.objects for select
+  using (bucket_id = 'images');
+
+-- Allow authenticated users (admins) to upload files to the images bucket
+create policy if not exists "Authenticated can upload images"
+  on storage.objects for insert
+  with check (bucket_id = 'images' and auth.role() = 'authenticated');
