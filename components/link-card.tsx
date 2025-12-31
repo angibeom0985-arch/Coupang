@@ -74,7 +74,7 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                 : 'rounded-2xl';
 
     let iconSrc: string | null = null;
-    let iconNode: JSX.Element | null = null;
+let iconNode: React.ReactNode | null = null;
     if (item.type === 'link' && item.icon) {
         if (item.icon.startsWith('sns:')) {
             const key = item.icon.replace('sns:', '');
@@ -83,7 +83,7 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                 if (typeof asset === 'string') {
                     iconSrc = asset;
                 } else {
-                    iconNode = asset as JSX.Element;
+                    iconNode = asset as React.ReactNode;
                 }
             }
         } else if (item.icon.startsWith('http')) {
