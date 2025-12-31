@@ -41,6 +41,54 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
         setEditingId(newText.id);
     };
 
+    const addAdNote = () => {
+        const newText: ContentItem = {
+            id: Date.now().toString(),
+            type: 'text',
+            content: '⚠️ 광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.',
+            enabled: true,
+        };
+        onUpdate([...links, newText]);
+        setEditingId(newText.id);
+        alert('설정 > 광고 코드에 스크립트를 먼저 넣어 주세요.');
+    };
+
+    const snsPresets: Record<string, { title: string; url: string }> = {
+        instagram: { title: '인스타그램', url: 'https://www.instagram.com/' },
+        youtube: { title: '유튜브', url: 'https://www.youtube.com/' },
+        tiktok: { title: '틱톡', url: 'https://www.tiktok.com/' },
+        naverclip: { title: '네이버 클립', url: 'https://m.tv.naver.com/' },
+    };
+
+    const addSNS = () => {
+        const input = prompt('추가할 SNS를 입력하세요 (인스타그램/유튜브/틱톡/네이버 클립)');
+        const platform = input?.trim().toLowerCase();
+        if (!platform) return;
+
+        let key: string | null = null;
+        if (platform.includes('인스')) key = 'instagram';
+        else if (platform.includes('유튜')) key = 'youtube';
+        else if (platform.includes('틱톡')) key = 'tiktok';
+        else if (platform.includes('네이버')) key = 'naverclip';
+
+        if (!key || !snsPresets[key]) {
+            alert('인스타그램, 유튜브, 틱톡, 네이버 클립 중에서만 추가할 수 있습니다.');
+            return;
+        }
+
+        const preset = snsPresets[key];
+        const newLink: ContentItem = {
+            id: Date.now().toString(),
+            type: 'link',
+            title: `${preset.title} 프로필`,
+            url: preset.url,
+            icon: 'link',
+            enabled: true,
+        };
+        onUpdate([...links, newLink]);
+        setEditingId(newLink.id);
+    };
+
     const deleteItem = (id: string) => {
         onUpdate(links.filter(link => link.id !== id));
     };
@@ -68,7 +116,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                 <CardTitle>링크 및 콘텐츠 관리</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <Button onClick={addLink} className="flex-1">
                         <LinkIcon className="w-4 h-4 mr-2" />
                         단일 링크 추가
@@ -76,6 +124,12 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                     <Button onClick={addText} variant="outline" className="flex-1">
                         <Type className="w-4 h-4 mr-2" />
                         텍스트 추가
+                    </Button>
+                    <Button onClick={addSNS} variant="secondary" className="flex-1">
+                        SNS 추가
+                    </Button>
+                    <Button onClick={addAdNote} variant="destructive" className="flex-1">
+                        광고 추가
                     </Button>
                 </div>
 
