@@ -26,15 +26,19 @@ const snsIcons: Record<string, any> = {
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
     if (item.type === 'ad') {
         return (
-            <div className="w-full rounded-2xl border border-dashed border-amber-300 bg-amber-50 text-amber-800 p-4 text-sm text-center">
-                {adCode ? (
-                    <div
-                        className="w-full h-full overflow-hidden"
-                        dangerouslySetInnerHTML={{ __html: adCode }}
-                    />
-                ) : (
-                    '광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.'
-                )}
+            <div className="w-full rounded-2xl border border-muted bg-white/60 p-4 text-sm text-center">
+                {adCode
+                    ? (
+                        <div
+                            className="w-full h-full overflow-hidden"
+                            dangerouslySetInnerHTML={{ __html: adCode }}
+                        />
+                    ) : (
+                        <span className="text-muted-foreground">
+                            광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.
+                        </span>
+                    )
+                }
             </div>
         );
     }

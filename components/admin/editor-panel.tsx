@@ -155,6 +155,24 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 placeholder="오른쪽에서 왼쪽으로 흐르는 광고 문구를 입력하세요"
                             />
+                            <div className="grid grid-cols-2 gap-3 mt-3">
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium block">배경색</label>
+                                    <Input
+                                        type="color"
+                                        value={data.adBannerBackground || '#f97316'}
+                                        onChange={(e) => onDataChange({ ...data, adBannerBackground: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium block">글자색</label>
+                                    <Input
+                                        type="color"
+                                        value={data.adBannerTextColor || '#ffffff'}
+                                        onChange={(e) => onDataChange({ ...data, adBannerTextColor: e.target.value })}
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         <ThemeEditor

@@ -27,7 +27,7 @@ export function ProfileEditor({ profile, onUpdate, enabled, onToggle }: ProfileE
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <div className="flex items-center gap-4">
-                        <CardTitle className="text-xl font-bold">프로필 설정</CardTitle>
+                        <CardTitle className="text-base font-semibold">프로필 설정</CardTitle>
                         <Switch
                             checked={enabled}
                             onCheckedChange={onToggle}

@@ -80,29 +80,36 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
         naverclip: { title: '네이버 클립', url: 'https://m.tv.naver.com/' },
     };
 
-    const addSNS = () => {
-        const input = prompt('추가할 SNS를 입력하세요 (인스타그램/유튜브/틱톡/네이버 클립)');
-        const platform = input?.trim().toLowerCase();
-        if (!platform) return;
+    const snsOptions = [
+        { key: '', label: '일반 링크' },
+        { key: 'instagram', label: '인스타그램' },
+        { key: 'youtube', label: '유튜브' },
+        { key: 'tiktok', label: '틱톡' },
+        { key: 'naverclip', label: '네이버 클립' },
+    ];
 
-        let key: string | null = null;
-        if (platform.includes('인스')) key = 'instagram';
-        else if (platform.includes('유튜')) key = 'youtube';
-        else if (platform.includes('틱톡')) key = 'tiktok';
-        else if (platform.includes('네이버')) key = 'naverclip';
-
-        if (!key || !snsPresets[key]) {
-            alert('인스타그램, 유튜브, 틱톡, 네이버 클립 중에서만 추가할 수 있습니다.');
+    const setSNSPlatform = (id: string, platform: string) => {
+        if (!platform) {
+            updateItem(id, { icon: '' });
             return;
         }
+        const preset = snsPresets[platform];
+        updateItem(id, {
+            icon: `sns:${platform}`,
+            title: `${preset.title} 프로필`,
+            url: preset.url,
+        });
+    };
 
-        const preset = snsPresets[key];
+    const addSNS = () => {
+        const defaultPlatform = 'instagram';
+        const preset = snsPresets[defaultPlatform];
         const newLink: ContentItem = {
             id: Date.now().toString(),
             type: 'link',
             title: `${preset.title} 프로필`,
             url: preset.url,
-            icon: `sns:${key}`,
+            icon: `sns:${defaultPlatform}`,
             enabled: true,
         };
         onUpdate([...links, newLink]);
@@ -133,7 +140,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>링크 및 콘텐츠 관리</CardTitle>
+                <CardTitle className="text-base font-semibold">링크 및 콘텐츠 관리</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -184,68 +191,79 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                 <div className="flex-1">
                                     {item.type === 'link' ? (
                                         <div className="space-y-2">
-                                            <div className="flex gap-2">
-                                                <div className="flex-1 space-y-2">
-                                                    <Input
-                                                        value={item.title}
-                                                        onChange={(e) => updateItem(item.id, { title: e.target.value })}
-                                                        placeholder="링크 제목"
-                                                    />
-                                                    <Input
-                                                        value={item.url}
-                                                        onChange={(e) => updateItem(item.id, { url: e.target.value })}
-                                                        placeholder="https://example.com"
-                                                    />
-                                                </div>
-                                                <div className="w-20">
-                                                    <label className="cursor-pointer block relative group">
-                                                        <div className={`w-20 h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!getIconSrc(item.icon) ? 'text-muted-foreground' : ''}`}>
-                                                            {getIconSrc(item.icon) ? (
-                                                                <img src={getIconSrc(item.icon) as string} alt="Icon" className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <span className="text-xs text-center p-1">이미지<br />추가</span>
-                                                            )}
-                                                            <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs">
-                                                                변경
-                                                            </div>
+                                                <div className="flex gap-2">
+                                                    <div className="flex-1 space-y-2">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                            <Input
+                                                                value={item.title}
+                                                                onChange={(e) => updateItem(item.id, { title: e.target.value })}
+                                                                placeholder="링크 제목"
+                                                            />
+                                                            <select
+                                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                                                                value={item.icon?.startsWith('sns:') ? item.icon.replace('sns:', '') : ''}
+                                                                onChange={(e) => setSNSPlatform(item.id, e.target.value)}
+                                                            >
+                                                                {snsOptions.map((opt) => (
+                                                                    <option key={opt.key || 'default'} value={opt.key}>{opt.label}</option>
+                                                                ))}
+                                                            </select>
                                                         </div>
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            className="hidden"
-                                                            onChange={async (e) => {
-                                                                const file = e.target.files?.[0];
-                                                                if (!file) return;
-
-                                                                try {
-                                                                    const timestamp = Date.now();
-                                                                    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-                                                                    const filename = `link_${item.id}_${timestamp}_${cleanName}`;
-
-                                                                    // Upload to Supabase Storage
-                                                                    const { error } = await supabase
-                                                                        .storage
-                                                                        .from('images') // Using same bucket as profile
-                                                                        .upload(filename, file, { cacheControl: '3600', upsert: false });
-
-                                                                    if (error) throw error;
-
-                                                                    // Get Public URL
-                                                                    const { data: { publicUrl } } = supabase
-                                                                        .storage
-                                                                        .from('images')
-                                                                        .getPublicUrl(filename);
-
-                                                                    updateItem(item.id, { icon: publicUrl });
-                                                                } catch (err: any) {
-                                                                    console.error('Upload failed:', err);
-                                                                    alert('이미지 업로드 실패: ' + err.message);
-                                                                }
-                                                            }}
+                                                        <Input
+                                                            value={item.url}
+                                                            onChange={(e) => updateItem(item.id, { url: e.target.value })}
+                                                            placeholder="https://example.com"
                                                         />
-                                                    </label>
+                                                    </div>
+                                                    <div className="w-20">
+                                                        <label className="cursor-pointer block relative group">
+                                                            <div className={`w-20 h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!getIconSrc(item.icon) ? 'text-muted-foreground' : ''}`}>
+                                                                {getIconSrc(item.icon) ? (
+                                                                    <img src={getIconSrc(item.icon) as string} alt="Icon" className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <span className="text-xs text-center p-1">이미지<br />추가</span>
+                                                                )}
+                                                                <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-xs">
+                                                                    변경
+                                                                </div>
+                                                            </div>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                className="hidden"
+                                                                onChange={async (e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (!file) return;
+
+                                                                    try {
+                                                                        const timestamp = Date.now();
+                                                                        const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                                                                        const filename = `link_${item.id}_${timestamp}_${cleanName}`;
+
+                                                                        // Upload to Supabase Storage
+                                                                        const { error } = await supabase
+                                                                            .storage
+                                                                            .from('images') // Using same bucket as profile
+                                                                            .upload(filename, file, { cacheControl: '3600', upsert: false });
+
+                                                                        if (error) throw error;
+
+                                                                        // Get Public URL
+                                                                        const { data: { publicUrl } } = supabase
+                                                                            .storage
+                                                                            .from('images')
+                                                                            .getPublicUrl(filename);
+
+                                                                        updateItem(item.id, { icon: publicUrl });
+                                                                    } catch (err: any) {
+                                                                        console.error('Upload failed:', err);
+                                                                        alert('이미지 업로드 실패: ' + err.message);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
                                         </div>
                                     ) : item.type === 'text' ? (
                                         <Textarea

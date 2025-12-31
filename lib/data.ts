@@ -56,6 +56,8 @@ export interface LinksData {
     searchEnabled?: boolean;
     searchPlaceholder?: string;
     adCode?: string;
+    adBannerBackground?: string;
+    adBannerTextColor?: string;
 }
 
 export const SETTINGS_TABLE = 'settings';

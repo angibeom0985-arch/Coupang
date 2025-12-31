@@ -54,5 +54,7 @@
     ],
     "searchEnabled": false,
     "searchPlaceholder": "링크 검색",
-    "adCode": ""
+    "adCode": "",
+    "adBannerBackground": "#f97316",
+    "adBannerTextColor": "#ffffff"
 }

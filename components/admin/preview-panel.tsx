@@ -49,7 +49,13 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                     {/* Status Bar Area (Top rounded corners safe area) */}
                     <div className="h-6 w-full bg-white shrink-0"></div>
 
-                    {data.adBanner && <AdBanner text={data.adBanner} />}
+                    {data.adBanner && (
+                        <AdBanner
+                            text={data.adBanner}
+                            background={data.adBannerBackground}
+                            textColor={data.adBannerTextColor}
+                        />
+                    )}
 
                     <div
                         className="w-full flex-1 overflow-y-auto"
