@@ -1,8 +1,5 @@
 import { ContentItem } from '@/lib/data';
-import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
-import YoutubeLogo from '@/components/admin/유튜브.png';
-import TiktokLogo from '@/components/admin/틱톡.png';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Instagram, Youtube, Music4, Globe2, Facebook, Mail, Phone, Link2 } from 'lucide-react';
 
 interface LinkCardProps {
     item: ContentItem;
@@ -16,11 +13,17 @@ interface LinkCardProps {
     adCode?: string;
 }
 
-const snsIcons: Record<string, any> = {
-    instagram: InstagramLogo,
-    youtube: YoutubeLogo,
-    tiktok: TiktokLogo,
-    naverclip: null, // no logo asset provided
+const snsIcons: Record<string, string | JSX.Element> = {
+    instagram: <Instagram className="w-5 h-5" />,
+    youtube: <Youtube className="w-5 h-5" />,
+    tiktok: <Music4 className="w-5 h-5" />,
+    x: <Globe2 className="w-5 h-5" />,
+    threads: <Globe2 className="w-5 h-5" />,
+    naverclip: <Globe2 className="w-5 h-5" />,
+    facebook: <Facebook className="w-5 h-5" />,
+    homepage: <Link2 className="w-5 h-5" />,
+    email: <Mail className="w-5 h-5" />,
+    phone: <Phone className="w-5 h-5" />,
 };
 
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
@@ -35,7 +38,7 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                         />
                     ) : (
                         <span className="text-muted-foreground">
-                            광고 영역입니다. 설정 탭에서 광고 코드를 먼저 입력하세요.
+                            ?? ?????. ?? ?? Body/?? ??? ????? ?????.
                         </span>
                     )
                 }
@@ -70,12 +73,17 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                 : 'rounded-2xl';
 
     let iconSrc: string | null = null;
+    let iconNode: JSX.Element | null = null;
     if (item.type === 'link' && item.icon) {
         if (item.icon.startsWith('sns:')) {
             const key = item.icon.replace('sns:', '');
             const asset = snsIcons[key];
             if (asset) {
-                iconSrc = typeof asset === 'string' ? asset : asset.src;
+                if (typeof asset === 'string') {
+                    iconSrc = asset;
+                } else {
+                    iconNode = asset as JSX.Element;
+                }
             }
         } else if (item.icon.startsWith('http')) {
             iconSrc = item.icon;
@@ -91,9 +99,15 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
             style={buttonStyle}
         >
             <div className="flex items-center gap-3 flex-1 overflow-hidden">
-                {iconSrc ? (
+                {iconSrc || iconNode ? (
                     <div className="w-10 h-10 rounded-md overflow-hidden bg-white/10 flex-shrink-0">
-                        <img src={iconSrc} alt={item.title} className="w-full h-full object-cover" />
+                        {iconSrc ? (
+                            <img src={iconSrc} alt={item.title} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-white/80">
+                                {iconNode}
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <ExternalLink className="w-5 h-5 flex-shrink-0 opacity-70" />

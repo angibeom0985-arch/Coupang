@@ -17,8 +17,12 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [draggingId, setDraggingId] = useState<string | null>(null);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
+
     const enabledLinks = data.links.filter((link) => link.enabled);
     const showSearch = data.searchEnabled === true;
+    const bodyAdCode = data.customBodyCode ?? data.adCode ?? "";
+    const showBanner = (data.adBannerEnabled !== false) && Boolean(data.adBanner);
+
     const filteredLinks = useMemo(() => {
         if (!showSearch) return enabledLinks;
 
@@ -40,16 +44,14 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
         <div className="h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-slate-100 to-slate-200">
             <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
                 <Smartphone className="w-4 h-4" />
-                <span>미리보기</span>
+                <span>모바일 미리보기</span>
             </div>
 
             <div className="relative">
-                {/* Mobile frame */}
                 <div className="w-[375px] h-[667px] bg-white rounded-[3rem] shadow-2xl border-8 border-black overflow-hidden flex flex-col">
-                    {/* Status Bar Area (Top rounded corners safe area) */}
                     <div className="h-6 w-full bg-white shrink-0"></div>
 
-                    {data.adBanner && (
+                    {showBanner && (
                         <AdBanner
                             text={data.adBanner}
                             background={data.adBannerBackground}
@@ -62,10 +64,10 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                         style={{ backgroundColor: data.profile.theme.backgroundColor }}
                     >
                         <div className="py-12 px-6 space-y-6">
-                            {data.customBodyCode && (
+                            {bodyAdCode && (
                                 <div
                                     className="mb-2 overflow-hidden"
-                                    dangerouslySetInnerHTML={{ __html: data.customBodyCode }}
+                                    dangerouslySetInnerHTML={{ __html: bodyAdCode }}
                                 />
                             )}
 
@@ -79,7 +81,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                                     <Input
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder={data.searchPlaceholder || '검색어를 입력하세요'}
+                                        placeholder={data.searchPlaceholder || '링크를 검색해 보세요'}
                                         className="pl-9 bg-white/80"
                                     />
                                 </div>
@@ -122,7 +124,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                                                 key={item.id}
                                                 item={item}
                                                 theme={data.profile.theme}
-                                                adCode={data.adCode}
+                                                adCode={bodyAdCode}
                                             />
                                         </div>
                                     );
@@ -132,7 +134,6 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                     </div>
                 </div>
 
-                {/* Home button */}
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-12 h-12 bg-black rounded-full opacity-20"></div>
             </div>
         </div>

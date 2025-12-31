@@ -8,20 +8,17 @@ import { Input } from '@/components/ui/input';
 interface ThemeEditorProps {
     theme: Theme;
     onUpdate: (key: string, value: string) => void;
-    faviconUrl?: string;
-    onFaviconUpdate: (url: string) => void;
 }
 
-export function ThemeEditor({ theme, onUpdate, faviconUrl, onFaviconUpdate }: ThemeEditorProps) {
+export function ThemeEditor({ theme, onUpdate }: ThemeEditorProps) {
     return (
         <Card>
             <CardHeader>
                 <CardTitle>테마 설정</CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
-                {/* Page Design Section */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium border-b pb-2">📄 페이지 디자인</h3>
+                    <h3 className="text-lg font-medium border-b pb-2">페이지 배경/텍스트</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="backgroundColor">배경 색상</Label>
@@ -59,29 +56,13 @@ export function ThemeEditor({ theme, onUpdate, faviconUrl, onFaviconUpdate }: Th
                             </div>
                         </div>
                     </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="favicon">사이트 아이콘 (파비콘)</Label>
-                        <div className="space-y-1">
-                            <Input
-                                id="favicon"
-                                value={faviconUrl || ''}
-                                onChange={(e) => onFaviconUpdate(e.target.value)}
-                                placeholder="https://example.com/icon.png"
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                브라우저 탭에 표시될 아이콘의 이미지 URL을 입력하세요. (권장: 32x32 혹은 64x64)
-                            </p>
-                        </div>
-                    </div>
                 </div>
 
-                {/* Button Design Section */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium border-b pb-2">🔘 버튼 디자인</h3>
+                    <h3 className="text-lg font-medium border-b pb-2">버튼 디자인</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="buttonColor">버튼 배경 색상 (&& 테두리)</Label>
+                            <Label htmlFor="buttonColor">버튼 배경 색상 (& 테두리)</Label>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="space-y-1">
                                     <Label className="text-xs text-muted-foreground">배경</Label>
@@ -110,7 +91,7 @@ export function ThemeEditor({ theme, onUpdate, faviconUrl, onFaviconUpdate }: Th
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="buttonTextColor">버튼 텍스트 색상 (&& 테두리)</Label>
+                            <Label htmlFor="buttonTextColor">버튼 텍스트 색상 (& 외곽선)</Label>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="space-y-1">
                                     <Label className="text-xs text-muted-foreground">텍스트</Label>
@@ -140,7 +121,7 @@ export function ThemeEditor({ theme, onUpdate, faviconUrl, onFaviconUpdate }: Th
                     </div>
 
                     <div className="space-y-2">
-                        <Label>버튼 스타일</Label>
+                        <Label>버튼 모양</Label>
                         <div className="flex gap-2">
                             {(['rounded', 'square', 'pill'] as const).map((style) => (
                                 <button
@@ -157,8 +138,8 @@ export function ThemeEditor({ theme, onUpdate, faviconUrl, onFaviconUpdate }: Th
                                         }`}
                                 >
                                     {style === 'rounded' && '둥근 모서리'}
-                                    {style === 'square' && '사각형'}
-                                    {style === 'pill' && '완전히 둥글게'}
+                                    {style === 'square' && '각진'}
+                                    {style === 'pill' && '캡슐형'}
                                 </button>
                             ))}
                         </div>

@@ -1,8 +1,10 @@
 {
     "profile": {
-        "name": "데이비 | 앳센스 컨설턴트",
-        "description": "😊 너 나 동료가 될래?\n👔 광고 성장일등 축하드립니다 👏\n📝 100만원 가치 강의를 *무료* 공개!",
+        "name": "준테크 | 쿠팡파트너스",
+        "description": "쿠폰 최저가 상품을 공유합니다\n무료 광고 의뢰도 가능합니다 🙌\n오늘의 100만원 가치강의도 *무료* 공개!",
         "avatar": "https://via.placeholder.com/150",
+        "coverImage": "",
+        "profileLayout": "both",
         "theme": {
             "backgroundColor": "#f5f5f5",
             "textColor": "#1a1a1a",
@@ -11,12 +13,13 @@
             "buttonStyle": "rounded"
         }
     },
-    "adBanner": "🎉 쿠팡 파트너스 활동으로 일정액의 수수료를 제공받고 있습니다",
+    "adBanner": "좌측 쿠팡 링크 크리에이터 맞팔·문의 환영합니다",
+    "adBannerEnabled": true,
     "links": [
         {
             "id": "1",
             "type": "link",
-            "title": "🔹 애드센스 승인 가이드",
+            "title": "인기 쿠팡 링크 모음",
             "url": "https://link.coupang.com/a/c6JDTGs",
             "icon": "link",
             "enabled": true
@@ -24,7 +27,7 @@
         {
             "id": "2",
             "type": "link",
-            "title": "🔹 애드센스 수익화 가이드",
+            "title": "오늘의 추천 링크",
             "url": "https://link.coupang.com/a/c6JDTGs",
             "icon": "link",
             "enabled": true
@@ -32,7 +35,7 @@
         {
             "id": "3",
             "type": "link",
-            "title": "🔹 (무료) 애드센스 원본 단락별 수",
+            "title": "무료 링크 이벤트 참여",
             "url": "https://link.coupang.com/a/c6JDTGs",
             "icon": "link",
             "enabled": true
@@ -40,20 +43,20 @@
         {
             "id": "4",
             "type": "text",
-            "content": "⬇️ 가성비 노트북 첫나다고 하나요? 시리즈 골라주 ⬇️",
+            "content": "👇 같이 할인 받기 좋은 링크가 있어요 👇",
             "enabled": true
         },
         {
             "id": "5",
             "type": "link",
-            "title": "🎫 로고제작",
+            "title": "스페셜 프로모션",
             "url": "https://link.coupang.com/a/c6JDTGs",
             "icon": "ticket",
             "enabled": true
         }
     ],
     "searchEnabled": false,
-    "searchPlaceholder": "링크 검색",
+    "searchPlaceholder": "링크를 검색해 주세요",
     "adCode": "",
     "adBannerBackground": "#f97316",
     "adBannerTextColor": "#ffffff"

@@ -15,7 +15,6 @@ export default function Home() {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        // Load initial data
         const loadData = async () => {
             const data = await getLinksData();
             setData(data);
@@ -33,6 +32,8 @@ export default function Home() {
 
     const enabledLinks = data.links.filter(link => link.enabled);
     const showSearch = data.searchEnabled === true;
+    const bodyAdCode = data.customBodyCode ?? data.adCode ?? '';
+    const showBanner = (data.adBannerEnabled !== false) && Boolean(data.adBanner);
     const filteredLinks = enabledLinks.filter((item) => {
         if (!showSearch) return true;
 
@@ -47,7 +48,6 @@ export default function Home() {
             return item.content.toLowerCase().includes(query);
         }
 
-        // 광고는 검색에 제외/항상 표시
         return true;
     });
 
@@ -56,7 +56,7 @@ export default function Home() {
             <Suspense>
                 <AnalyticsTracker />
             </Suspense>
-            {data.adBanner && (
+            {showBanner && (
                 <AdBanner
                     text={data.adBanner}
                     background={data.adBannerBackground}
@@ -70,10 +70,10 @@ export default function Home() {
             >
                 <div className="max-w-2xl mx-auto">
                     {/* Custom Body Code (Display Ads) */}
-                    {data.customBodyCode && (
+                    {bodyAdCode && (
                         <div
                             className="mb-8 overflow-hidden"
-                            dangerouslySetInnerHTML={{ __html: data.customBodyCode }}
+                            dangerouslySetInnerHTML={{ __html: bodyAdCode }}
                         />
                     )}
 
@@ -87,7 +87,7 @@ export default function Home() {
                             <Input
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder={data.searchPlaceholder || '검색어를 입력하세요'}
+                                placeholder={data.searchPlaceholder || '링크를 검색해 보세요'}
                                 className="pl-9"
                             />
                         </div>
@@ -99,7 +99,7 @@ export default function Home() {
                                 key={item.id}
                                 item={item}
                                 theme={data.profile.theme}
-                                adCode={data.adCode}
+                                adCode={bodyAdCode}
                             />
                         ))}
                     </div>

@@ -1,8 +1,8 @@
-import { useDebounce } from 'use-debounce';
 import { LinksData, ContentItem } from '@/lib/data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ProfileEditor } from './profile-editor';
 import { LinkEditor } from './link-editor';
 import { ThemeEditor } from './theme-editor';
@@ -15,8 +15,6 @@ interface EditorPanelProps {
 }
 
 export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
-    const [debouncedData] = useDebounce(data, 1000);
-
     const updateProfile = (key: string, value: any) => {
         onDataChange({
             ...data,
@@ -40,13 +38,6 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
         });
     };
 
-    const updateAdBanner = (text: string) => {
-        onDataChange({
-            ...data,
-            adBanner: text,
-        });
-    };
-
     const updateLinks = (newLinks: ContentItem[]) => {
         onDataChange({
             ...data,
@@ -54,10 +45,80 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
         });
     };
 
+    const bannerEnabled = data.adBannerEnabled !== false;
+    const bannerTextColors = ['#0f172a', '#ffffff', '#334155', '#f97316'];
+    const bannerBgColors = ['#fde68a', '#fca5a5', '#d9f99d', '#c7d2fe', '#0f172a', '#f97316'];
+
+    const renderBannerCard = () => (
+        <div className="p-4 bg-muted/50 rounded-lg border space-y-4">
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <p className="text-sm font-medium">배너 문구</p>
+                    <p className="text-xs text-muted-foreground">페이지 상단에 노출되는 안내/공지 배너입니다.</p>
+                </div>
+                <Switch
+                    checked={bannerEnabled}
+                    onCheckedChange={(checked) => onDataChange({ ...data, adBannerEnabled: checked })}
+                />
+            </div>
+            <Textarea
+                value={data.adBanner || ''}
+                onChange={(e) => onDataChange({ ...data, adBanner: e.target.value })}
+                placeholder="상단 배너에 표시할 문구를 입력하세요."
+                rows={3}
+            />
+            <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">글씨 색상</p>
+                    <div className="flex gap-2 flex-wrap">
+                        {bannerTextColors.map((c) => (
+                            <button
+                                key={c}
+                                className={`w-8 h-8 rounded-full border ${data.adBannerTextColor === c ? 'ring-2 ring-primary' : ''}`}
+                                style={{ backgroundColor: c }}
+                                onClick={() => onDataChange({ ...data, adBannerTextColor: c })}
+                            />
+                        ))}
+                        <Input
+                            type="color"
+                            value={data.adBannerTextColor || '#ffffff'}
+                            onChange={(e) => onDataChange({ ...data, adBannerTextColor: e.target.value })}
+                            className="w-12 h-8 p-0"
+                        />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">배경 색상</p>
+                    <div className="flex gap-2 flex-wrap">
+                        {bannerBgColors.map((c) => (
+                            <button
+                                key={c}
+                                className={`w-8 h-8 rounded-full border ${data.adBannerBackground === c ? 'ring-2 ring-primary' : ''}`}
+                                style={{ backgroundColor: c }}
+                                onClick={() => onDataChange({ ...data, adBannerBackground: c })}
+                            />
+                        ))}
+                        <Input
+                            type="color"
+                            value={data.adBannerBackground || '#f97316'}
+                            onChange={(e) => onDataChange({ ...data, adBannerBackground: e.target.value })}
+                            className="w-12 h-8 p-0"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="p-3 rounded-lg border flex items-center gap-3" style={{ backgroundColor: data.adBannerBackground || '#f97316' }}>
+                <span className="text-sm font-medium" style={{ color: data.adBannerTextColor || '#ffffff' }}>
+                    {data.adBanner || '배너 문구를 입력하세요.'}
+                </span>
+            </div>
+        </div>
+    );
+
     return (
         <div className="h-full flex flex-col bg-background">
             <div className="border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold">편집 패널</h2>
+                <h2 className="text-lg font-semibold">에디터 패널</h2>
             </div>
 
             <Tabs defaultValue="page" className="flex-1 flex flex-col">
@@ -66,58 +127,47 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         value="page"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        📄 페이지
+                        기본 페이지
                     </TabsTrigger>
                     <TabsTrigger
                         value="design"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        🎨 디자인
+                        디자인
                     </TabsTrigger>
                     <TabsTrigger
                         value="settings"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        ⚙️ 설정
+                        설정
                     </TabsTrigger>
                     <TabsTrigger
                         value="manage"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        📊 통계
+                        데이터 관리
                     </TabsTrigger>
                 </TabsList>
 
                 <div className="flex-1 overflow-y-auto">
                     <TabsContent value="page" className="m-0 p-6 space-y-6">
                         <div className="space-y-4">
-                            <div className="p-4 bg-muted/50 rounded-lg border">
-                                <label className="text-sm font-medium mb-2 block">
-                                    📢 상단 광고 배너 문구
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.adBanner || ''}
-                                    onChange={(e) => updateAdBanner(e.target.value)}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="오른쪽에서 왼쪽으로 흐르는 광고 문구를 입력하세요"
-                                />
-                            </div>
+                            {renderBannerCard()}
 
                             <div className="p-4 bg-muted/50 rounded-lg border">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="space-y-2 flex-1">
                                         <label className="text-sm font-medium block">
-                                            🔍 검색창 표시
+                                            검색 기능 표시
                                         </label>
                                         <p className="text-sm text-muted-foreground">
-                                            링크/텍스트를 제목으로 찾을 수 있는 검색 입력창을 표시합니다.
+                                            링크/텍스트 제목으로 찾을 수 있는 검색 바를 표시합니다.
                                         </p>
                                         {data.searchEnabled && (
                                             <Input
                                                 value={data.searchPlaceholder || ''}
                                                 onChange={(e) => onDataChange({ ...data, searchPlaceholder: e.target.value })}
-                                                placeholder="검색어를 입력하세요"
+                                                placeholder="검색어를 입력하세요."
                                             />
                                         )}
                                     </div>
@@ -144,42 +194,11 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                     </TabsContent>
 
                     <TabsContent value="design" className="m-0 p-6 space-y-6">
-                        <div className="p-4 bg-muted/50 rounded-lg border">
-                            <label className="text-sm font-medium mb-2 block">
-                                📢 상단 광고 배너 문구
-                            </label>
-                            <input
-                                type="text"
-                                value={data.adBanner || ''}
-                                onChange={(e) => updateAdBanner(e.target.value)}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="오른쪽에서 왼쪽으로 흐르는 광고 문구를 입력하세요"
-                            />
-                            <div className="grid grid-cols-2 gap-3 mt-3">
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium block">배경색</label>
-                                    <Input
-                                        type="color"
-                                        value={data.adBannerBackground || '#f97316'}
-                                        onChange={(e) => onDataChange({ ...data, adBannerBackground: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium block">글자색</label>
-                                    <Input
-                                        type="color"
-                                        value={data.adBannerTextColor || '#ffffff'}
-                                        onChange={(e) => onDataChange({ ...data, adBannerTextColor: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        {renderBannerCard()}
 
                         <ThemeEditor
                             theme={data.profile.theme}
                             onUpdate={updateTheme}
-                            faviconUrl={data.faviconUrl}
-                            onFaviconUpdate={(url) => onDataChange({ ...data, faviconUrl: url })}
                         />
                     </TabsContent>
 

@@ -15,6 +15,8 @@ export interface Profile {
     name: string;
     description: string;
     avatar: string;
+    coverImage?: string;
+    profileLayout?: 'avatar' | 'cover' | 'both';
     theme: Theme;
 }
 
@@ -48,6 +50,7 @@ export interface LinksData {
     profile: Profile;
     links: ContentItem[];
     adBanner?: string;
+    adBannerEnabled?: boolean;
     profileEnabled?: boolean;
     siteTitle?: string;
     customHeadCode?: string;
