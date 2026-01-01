@@ -32,10 +32,13 @@ const snsPresets: Record<SnsKey, { title: string; url: string; icon: string }> =
     tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
 };
 
-const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPresets).map(([key, value]) => (
-    key,
-    label: value.title,
-))];
+const snsOptions = [
+    { key: '', label: '일반 링크' },
+    ...Object.entries(snsPresets).map(([key, value]) => ({
+        key,
+        label: value.title,
+    })),
+];
 
 export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
