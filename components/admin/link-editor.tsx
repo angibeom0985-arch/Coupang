@@ -349,14 +349,13 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                             {Object.entries(snsPresets).map(([key, preset]) => (
                                 <button
                                     key={key}
-            onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
-            className="flex flex-col items-center justify-center gap-2 rounded-lg border border-transparent p-3 hover:bg-muted transition"
-            title={preset.title}
-        >
-                                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                                    onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
+                                    className="flex items-center justify-center rounded-lg border border-transparent p-2 hover:bg-muted transition bg-transparent"
+                                    title={preset.title}
+                                >
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
                                         <img src={preset.icon} alt={preset.title} className="w-full h-full object-contain" />
                                     </div>
-                                    <span className="text-xs text-center">{preset.title}</span>
                                 </button>
                             ))}
                         </div>
