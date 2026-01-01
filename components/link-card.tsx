@@ -26,11 +26,11 @@ const snsIcons: Record<string, string> = {
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
     if (item.type === 'ad') {
         return (
-            <div className="w-full rounded-2xl border border-muted bg-white/60 p-4 text-sm text-center">
+            <div className="w-full rounded-2xl border border-muted bg-white/60 p-4 text-sm text-center min-h-[120px]">
                 {adCode
                     ? (
                         <div
-                            className="w-full h-full overflow-hidden"
+                            className="w-full overflow-visible"
                             dangerouslySetInnerHTML={{ __html: adCode }}
                         />
                     ) : (
