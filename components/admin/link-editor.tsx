@@ -295,13 +295,13 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                             {adCode ? (
                                                 <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: adCode }} />
                                             ) : (
-                                                <button
-                                                    type="button"
-                                                    className="text-xs text-blue-700 underline self-start"
-                                                    onClick={() => alert('광고 설정 방법:\\n1) 설정 탭 > 고급 설정 > Body/광고 코드에 디스플레이 광고 스크립트를 입력하세요.\\n2) 저장 후 광고 추가를 눌러 위치를 배치하세요.')}
-                                                >
-                                                    광고 설정 방법
-                                                </button>
+                                                <details className="text-xs text-muted-foreground">
+                                                    <summary className="cursor-pointer text-blue-700">광고 설정 방법</summary>
+                                                    <div className="mt-2 space-y-1 text-xs leading-relaxed">
+                                                        <p>1) 설정 탭 &gt; 고급 설정 &gt; Body/광고 코드에 디스플레이 광고 스크립트를 입력하세요.</p>
+                                                        <p>2) 저장 후 광고 추가를 눌러 원하는 위치에 배치하세요.</p>
+                                                    </div>
+                                                </details>
                                             )}
                                         </div>
                                     )}
@@ -350,10 +350,10 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                             {Object.entries(snsPresets).map(([key, preset]) => (
                                 <button
                                     key={key}
-                                    onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
-                                    className="flex flex-col items-center justify-center gap-2 rounded-lg border p-3 hover:bg-muted transition"
-                                    title={preset.title}
-                                >
+            onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
+            className="flex flex-col items-center justify-center gap-2 rounded-lg border border-transparent p-3 hover:bg-muted transition"
+            title={preset.title}
+        >
                                     <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                                         <img src={preset.icon} alt={preset.title} className="w-full h-full object-contain" />
                                     </div>
