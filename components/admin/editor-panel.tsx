@@ -197,6 +197,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         </div>
                         <LinkEditor
                             links={data.links}
+                            adCode={data.customBodyCode ?? data.adCode ?? ''}
                             onUpdate={updateLinks}
                         />
                     </TabsContent>

@@ -21,6 +21,7 @@ import TiktokLogo from '@/components/admin/틱톡.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
+    adCode?: string;
     onUpdate: (links: ContentItem[]) => void;
 }
 
@@ -37,7 +38,7 @@ const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPr
     label: value.title,
 }))];
 
-export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
+export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showSnsDialog, setShowSnsDialog] = useState(false);
     const [uploadingId, setUploadingId] = useState<string | null>(null);
@@ -172,19 +173,18 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <Button onClick={addLink} className="flex-1">
+                    <Button onClick={addLink} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         <LinkIcon className="w-4 h-4 mr-2" />
                         일반 링크 추가
                     </Button>
-                    <Button onClick={addText} variant="outline" className="flex-1">
+                    <Button onClick={addText} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         <Type className="w-4 h-4 mr-2" />
                         텍스트 추가
                     </Button>
-                    <Button onClick={() => setShowSnsDialog(true)} variant="secondary" className="flex-1">
-                        <Plus className="w-4 h-4 mr-2" />
+                    <Button onClick={() => setShowSnsDialog(true)} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         SNS 설정
                     </Button>
-                    <Button onClick={addAdNote} variant="destructive" className="flex-1">
+                    <Button onClick={addAdNote} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         광고 추가
                     </Button>
                 </div>
@@ -283,9 +283,26 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                             rows={2}
                                         />
                                     ) : (
-                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex items-start gap-2">
-                                            <span role="img" aria-label="notice">📢</span>
-                                            <span>광고 영역입니다. 설정 탭의 Body/광고 코드에 스크립트를 입력하세요.</span>
+                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex flex-col gap-2">
+                                            <div className="flex items-start gap-2">
+                                                <span role="img" aria-label="notice">📢</span>
+                                                <span>
+                                                    {adCode
+                                                        ? '광고 코드가 설정되어 있습니다.'
+                                                        : '광고 영역입니다. 설정 탭의 Body/광고 코드에 스크립트를 입력하세요.'}
+                                                </span>
+                                            </div>
+                                            {adCode ? (
+                                                <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: adCode }} />
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className="text-xs text-blue-700 underline self-start"
+                                                    onClick={() => alert('광고 설정 방법:\\n1) 설정 탭 > 고급 설정 > Body/광고 코드에 디스플레이 광고 스크립트를 입력하세요.\\n2) 저장 후 광고 추가를 눌러 위치를 배치하세요.')}
+                                                >
+                                                    광고 설정 방법
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
