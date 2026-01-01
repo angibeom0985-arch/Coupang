@@ -21,6 +21,7 @@ import TiktokLogo from '@/components/admin/틱톡.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
+    adCode?: string;
     onUpdate: (links: ContentItem[]) => void;
 }
 
@@ -37,7 +38,7 @@ const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPr
     label: value.title,
 }))];
 
-export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
+export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showSnsDialog, setShowSnsDialog] = useState(false);
     const [uploadingId, setUploadingId] = useState<string | null>(null);
