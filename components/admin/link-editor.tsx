@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ContentItem } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const newLink: ContentItem = {
             id: Date.now().toString(),
             type: 'link',
-            title: '??留곹겕',
+            title: '새 링크',
             url: 'https://',
             icon: 'link',
             enabled: true,
@@ -62,7 +62,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const newText: ContentItem = {
             id: Date.now().toString(),
             type: 'text',
-            content: '???띿뒪??,
+            content: '새 텍스트',
             enabled: true,
         };
         onUpdate([...links, newText]);
@@ -78,7 +78,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         };
         onUpdate([...links, newAd]);
         setEditingId(newAd.id);
-        alert('?ㅼ젙 > 怨좉툒 ?ㅼ젙 > Body/愿묎퀬 肄붾뱶???ㅽ겕由쏀듃瑜??ｌ뼱 二쇱꽭??');
+        alert('설정 탭에 광고 스크립트를 입력해 주세요.');
     };
 
     const addSNS = (platform: SnsKey) => {
@@ -86,7 +86,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const newLink: ContentItem = {
             id: Date.now().toString(),
             type: 'link',
-            title: `${preset.title} ?꾨줈??,
+            title: `${preset.title} 프로필`,
             url: preset.url,
             icon: `sns:${platform}`,
             enabled: true,
@@ -123,12 +123,12 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const preset = snsPresets[platform as SnsKey];
         updateItem(id, {
             icon: `sns:${platform}`,
-            title: `${preset.title} ?꾨줈??,
+            title: `${preset.title} 프로필`,
             url: preset.url,
         });
     };
 
-        const uploadIcon = async (id: string, file: File) => {
+    const uploadIcon = async (id: string, file: File) => {
         setUploadingId(id);
         try {
             const formData = new FormData();
@@ -171,23 +171,23 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-base font-semibold">留곹겕 & 肄섑뀗痢?愿由?/CardTitle>
+                <CardTitle className="text-base font-semibold">링크 & 콘텐츠 관리</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <Button onClick={addLink} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         <LinkIcon className="w-4 h-4 mr-2" />
-                        ?쇰컲 留곹겕 異붽?
+                        일반 링크 추가
                     </Button>
                     <Button onClick={addText} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
                         <Type className="w-4 h-4 mr-2" />
-                        ?띿뒪??異붽?
+                        텍스트 추가
                     </Button>
                     <Button onClick={() => setShowSnsDialog(true)} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
-                        SNS ?ㅼ젙
+                        SNS 설정
                     </Button>
                     <Button onClick={addAdNote} variant="outline" className="flex-1 bg-transparent hover:bg-muted text-foreground">
-                        愿묎퀬 異붽?
+                        광고 추가
                     </Button>
                 </div>
 
@@ -228,7 +228,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                         <Input
                                                             value={item.title}
                                                             onChange={(e) => updateItem(item.id, { title: e.target.value })}
-                                                            placeholder="留곹겕 ?쒕ぉ"
+                                                            placeholder="링크 제목"
                                                         />
                                                         <select
                                                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -256,10 +256,10 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                                     getIconSrc(item.icon) as React.ReactNode
                                                                 )
                                                             ) : (
-                                                                <span className="text-xs text-center p-1">?꾩씠肄??낅줈??/span>
+                                                                <span className="text-xs text-center p-1">아이콘 업로드</span>
                                                             )}
                                                             <div className="absolute inset-0 bg-black/30 hidden group-hover:flex items-center justify-center text-white text-xs">
-                                                                蹂寃?
+                                                                변경
                                                             </div>
                                                         </div>
                                                         <input
@@ -273,7 +273,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                             }}
                                                         />
                                                     </label>
-                                                    {uploadingId === item.id && <span className="text-xs text-muted-foreground">?낅줈??以?..</span>}
+                                                    {uploadingId === item.id && <span className="text-xs text-muted-foreground">업로드 중...</span>}
                                                 </div>
                                             </div>
                                         </div>
@@ -281,16 +281,16 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                         <Textarea
                                             value={item.content}
                                             onChange={(e) => updateItem(item.id, { content: e.target.value })}
-                                            placeholder="?띿뒪?몃? ?낅젰?섏꽭??
+                                            placeholder="텍스트를 입력하세요."
                                             rows={2}
                                         />
                                     ) : (
                                         <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex flex-col gap-3">
-                                            <label className="text-xs font-medium text-amber-900">愿묎퀬 肄붾뱶</label>
+                                            <label className="text-xs font-medium text-amber-900">광고 코드</label>
                                             <Textarea
                                                 value={item.adHtml || ''}
                                                 onChange={(e) => updateItem(item.id, { adHtml: e.target.value })}
-                                                placeholder="<div>?ш린??愿묎퀬 ?ㅽ겕由쏀듃瑜??ｌ쑝?몄슂</div>"
+                                                placeholder="<div>여기에 광고 스크립트를 넣어주세요</div>"
                                                 rows={4}
                                                 className="font-mono text-xs"
                                             />
@@ -298,9 +298,9 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                 <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: item.adHtml }} />
                                             ) : (
                                                 <details className="text-xs text-muted-foreground">
-                                                    <summary className="cursor-pointer text-blue-700">愿묎퀬 ?ㅼ젙 諛⑸쾿</summary>
+                                                    <summary className="cursor-pointer text-blue-700">광고 설정 방법</summary>
                                                     <div className="mt-2 space-y-1 text-xs leading-relaxed">
-                                                        <p>??愿묎퀬 釉붾줉??諛붾줈 ?ㅽ겕由쏀듃瑜??ｌ쑝硫???????대떦 ?꾩튂???몄텧?⑸땲??</p>
+                                                        <p>설정 탭에 제공된 광고 스크립트를 붙여넣어 주세요.</p>
                                                     </div>
                                                 </details>
                                             )}
@@ -324,15 +324,15 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                             </div>
 
                             <div className="text-xs text-muted-foreground">
-                                {item.type === 'link' ? '?쇰컲 留곹겕' : item.type === 'text' ? '?띿뒪??肄섑뀗痢? : '愿묎퀬 ?곸뿭'} 쨌 {item.enabled ? '?몄텧' : '?④?'}
+                                {item.type === 'link' ? '일반 링크' : item.type === 'text' ? '텍스트' : '광고 영역'} · {item.enabled ? '노출' : '숨김'}
                             </div>
                         </div>
                     ))}
 
                     {links.length === 0 && (
                         <div className="text-center py-8 text-muted-foreground">
-                            <p>?꾩쭅 異붽???留곹겕媛 ?놁뒿?덈떎.</p>
-                            <p className="text-sm mt-1">?곷떒 踰꾪듉???대┃??留곹겕瑜?異붽???二쇱꽭??</p>
+                            <p>등록된 링크가 없습니다.</p>
+                            <p className="text-sm mt-1">상단 버튼을 눌러 링크를 추가해 주세요.</p>
                         </div>
                     )}
                 </div>
@@ -342,7 +342,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 space-y-4">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold">SNS ?ㅼ젙</h3>
+                            <h3 className="text-lg font-semibold">SNS 설정</h3>
                             <Button variant="ghost" size="icon" onClick={() => setShowSnsDialog(false)}>
                                 <X className="w-4 h-4" />
                             </Button>
@@ -367,8 +367,4 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         </Card>
     );
 }
-
-
-
-
 
