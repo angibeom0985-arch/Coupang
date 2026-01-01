@@ -37,7 +37,7 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                     <span className="text-muted-foreground">
                         광고 코드가 없습니다.
                     </span>
-                }
+                )}
             </div>
         );
     }
