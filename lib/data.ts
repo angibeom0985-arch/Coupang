@@ -54,6 +54,8 @@ export interface LinksData {
     adBannerEnabled?: boolean;
     profileEnabled?: boolean;
     siteTitle?: string;
+    faviconPngUrl?: string;
+    faviconIcoUrl?: string;
     customHeadCode?: string;
     customBodyCode?: string;
     faviconUrl?: string;

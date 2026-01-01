@@ -15,6 +15,12 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
     const data = await getLinksData();
     const title = data.siteTitle || "생꿀 | 생활 꿀팁&꿀템";
+    const icons: Metadata['icons'] = {
+        icon: [
+            data.faviconIcoUrl || data.faviconUrl || '/favicon.ico',
+            data.faviconPngUrl || '',
+        ].filter(Boolean) as string[],
+    };
 
     return {
         title: title,
@@ -32,9 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
             title: title,
             description: "나만의 링크 모음 페이지 - 하나의 링크로 모든 것을 공유하세요",
         },
-        icons: {
-            icon: data.faviconUrl || '/favicon.ico',
-        },
+        icons,
     };
 }
 
