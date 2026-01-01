@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { ContentItem } from '@/lib/data';
 import { ExternalLink } from 'lucide-react';
 import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
-import YoutubeLogo from '@/components/admin/?犿姕敫?png';
-import TiktokLogo from '@/components/admin/?表啞.png';
+import YoutubeLogo from '@/components/admin/유튜브.png';
+import TiktokLogo from '@/components/admin/틱톡.png';
 
 interface LinkCardProps {
     item: ContentItem;
