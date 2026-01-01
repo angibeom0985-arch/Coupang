@@ -27,15 +27,15 @@ interface LinkEditorProps {
 type SnsKey = 'instagram' | 'youtube' | 'tiktok';
 
 const snsPresets: Record<SnsKey, { title: string; url: string; icon: string }> = {
-    youtube: { title: '?좏뒠釉?, url: 'https://www.youtube.com/', icon: YoutubeLogo.src },
-    instagram: { title: '?몄뒪?洹몃옩', url: 'https://www.instagram.com/', icon: InstagramLogo.src },
-    tiktok: { title: '?깊넚', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
+    youtube: { title: '유튜브', url: 'https://www.youtube.com/', icon: YoutubeLogo.src },
+    instagram: { title: '인스타그램', url: 'https://www.instagram.com/', icon: InstagramLogo.src },
+    tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
 };
 
-const snsOptions = [{ key: '', label: '?쇰컲 留곹겕' }, ...Object.entries(snsPresets).map(([key, value]) => ({
+const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPresets).map(([key, value]) => (
     key,
     label: value.title,
-}))];
+))];
 
 export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -364,6 +364,8 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         </Card>
     );
 }
+
+
 
 
 
