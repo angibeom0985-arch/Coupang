@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ContentItem } from '@/lib/data';
 import { ExternalLink } from 'lucide-react';
 import InstagramLogo from '@/components/admin/Instagram_logo_2016.svg';
-import YoutubeLogo from '@/components/admin/유튜브.png';
-import TiktokLogo from '@/components/admin/틱톡.png';
+import YoutubeLogo from '@/components/admin/?犿姕敫?png';
+import TiktokLogo from '@/components/admin/?表啞.png';
 
 interface LinkCardProps {
     item: ContentItem;
@@ -26,13 +26,35 @@ const snsIcons: Record<string, string> = {
 export function LinkCard({ item, theme, adCode }: LinkCardProps) {
     if (item.type === 'ad') {
         const adHtml = item.adHtml || adCode || '';
+        const adContainerRef = useRef<HTMLDivElement>(null);
+
+        useEffect(() => {
+            const container = adContainerRef.current;
+            if (!container) return;
+
+            container.innerHTML = adHtml || '';
+
+            // Recreate script tags so third-party ad snippets execute after insertion
+            const scripts = Array.from(container.querySelectorAll('script'));
+            scripts.forEach((script) => {
+                const newScript = document.createElement('script');
+                newScript.async = script.async;
+                newScript.type = script.type || 'text/javascript';
+
+                if (script.src) {
+                    newScript.src = script.src;
+                } else {
+                    newScript.textContent = script.textContent ?? '';
+                }
+
+                script.replaceWith(newScript);
+            });
+        }, [adHtml]);
+
         return (
             <div className="w-full rounded-2xl border border-muted bg-white/60 p-4 text-sm text-center min-h-[120px]">
                 {adHtml ? (
-                    <div
-                        className="w-full overflow-visible"
-                        dangerouslySetInnerHTML={{ __html: adHtml }}
-                    />
+                    <div className="w-full overflow-visible" ref={adContainerRef} />
                 ) : (
                     <span className="text-muted-foreground">
                         광고 코드가 없습니다.
