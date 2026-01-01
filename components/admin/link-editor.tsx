@@ -21,7 +21,6 @@ import TiktokLogo from '@/components/admin/틱톡.png';
 
 interface LinkEditorProps {
     links: ContentItem[];
-    adCode?: string;
     onUpdate: (links: ContentItem[]) => void;
 }
 
@@ -38,7 +37,7 @@ const snsOptions = [{ key: '', label: '일반 링크' }, ...Object.entries(snsPr
     label: value.title,
 }))];
 
-export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
+export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showSnsDialog, setShowSnsDialog] = useState(false);
     const [uploadingId, setUploadingId] = useState<string | null>(null);
@@ -71,6 +70,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const newAd: ContentItem = {
             id: Date.now().toString(),
             type: 'ad',
+            adHtml: '',
             enabled: true,
         };
         onUpdate([...links, newAd]);
@@ -283,23 +283,22 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                             rows={2}
                                         />
                                     ) : (
-                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex flex-col gap-2">
-                                            <div className="flex items-start gap-2">
-                                                <span role="img" aria-label="notice">📢</span>
-                                                <span>
-                                                    {adCode
-                                                        ? '광고 코드가 설정되어 있습니다.'
-                                                        : '광고 영역입니다. 설정 탭의 Body/광고 코드에 스크립트를 입력하세요.'}
-                                                </span>
-                                            </div>
-                                            {adCode ? (
-                                                <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: adCode }} />
+                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex flex-col gap-3">
+                                            <label className="text-xs font-medium text-amber-900">광고 코드</label>
+                                            <Textarea
+                                                value={item.adHtml || ''}
+                                                onChange={(e) => updateItem(item.id, { adHtml: e.target.value })}
+                                                placeholder="<div>여기에 광고 스크립트를 넣으세요</div>"
+                                                rows={4}
+                                                className="font-mono text-xs"
+                                            />
+                                            {item.adHtml ? (
+                                                <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: item.adHtml }} />
                                             ) : (
                                                 <details className="text-xs text-muted-foreground">
                                                     <summary className="cursor-pointer text-blue-700">광고 설정 방법</summary>
                                                     <div className="mt-2 space-y-1 text-xs leading-relaxed">
-                                                        <p>1) 설정 탭 &gt; 고급 설정 &gt; Body/광고 코드에 디스플레이 광고 스크립트를 입력하세요.</p>
-                                                        <p>2) 저장 후 광고 추가를 눌러 원하는 위치에 배치하세요.</p>
+                                                        <p>이 광고 블록에 바로 스크립트를 넣으면 저장 후 해당 위치에 노출됩니다.</p>
                                                     </div>
                                                 </details>
                                             )}

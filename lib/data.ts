@@ -40,6 +40,7 @@ export interface TextItem {
 export interface AdItem {
     id: string;
     type: 'ad';
+    adHtml?: string;
     icon?: string;
     enabled: boolean;
 }
