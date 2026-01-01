@@ -91,6 +91,7 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
                 : 'rounded-2xl';
 
     let iconSrc: string | null = null;
+    const isSnsLogo = item.type === 'link' && item.icon?.startsWith('sns:');
     if (item.type === 'link' && item.icon) {
         if (item.icon.startsWith('sns:')) {
             const key = item.icon.replace('sns:', '');
@@ -101,6 +102,23 @@ export function LinkCard({ item, theme, adCode }: LinkCardProps) {
         } else if (item.icon.startsWith('http')) {
             iconSrc = item.icon;
         }
+    }
+
+    if (item.type === 'link' && isSnsLogo && iconSrc) {
+        return (
+            <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center py-4"
+            >
+                <img
+                    src={iconSrc}
+                    alt={item.title}
+                    className="h-12 w-12 rounded-xl object-contain"
+                />
+            </a>
+        );
     }
 
     return (
