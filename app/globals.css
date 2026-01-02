@@ -80,6 +80,6 @@
 
 .animate-scroll {
   display: inline-flex;
-  animation: marquee 5s linear infinite;
+  animation: marquee 7.5s linear infinite;
   min-width: 200%;
 }
