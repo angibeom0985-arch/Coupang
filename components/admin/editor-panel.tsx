@@ -55,19 +55,21 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
         const showPreview = options?.showPreview !== false;
         return (
             <div className="p-4 bg-muted/50 rounded-lg border space-y-4">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-2">
                     <div>
                         <p className="text-sm font-medium">배너 문구</p>
                         <p className="text-xs text-muted-foreground">페이지 상단에 노출되는 안내/공지 배너입니다.</p>
                     </div>
                     <Switch
+                        className="self-start"
                         checked={bannerEnabled}
                         onCheckedChange={(checked) => onDataChange({ ...data, adBannerEnabled: checked })}
                     />
                 </div>
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex flex-col gap-2">
                     <p className="text-sm font-medium">배너 스크롤</p>
                     <Switch
+                        className="self-start"
                         checked={bannerScrollEnabled}
                         onCheckedChange={(checked) => onDataChange({ ...data, adBannerScrollEnabled: checked })}
                     />
