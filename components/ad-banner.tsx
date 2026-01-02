@@ -26,9 +26,6 @@ export function AdBanner({ text, background, textColor }: AdBannerProps) {
                 <span className={`inline-block px-4 text-sm font-medium ${textClass}`}>
                     {text}
                 </span>
-                <span className={`inline-block px-4 text-sm font-medium ${textClass}`}>
-                    {text}
-                </span>
             </div>
         </div>
     );
