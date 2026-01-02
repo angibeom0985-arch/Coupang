@@ -10,6 +10,13 @@ interface ThemeEditorProps {
     onUpdate: (key: string, value: string) => void;
 }
 
+const fontOptions = [
+    { label: '기본 산세리프', value: 'Inter, system-ui, -apple-system, sans-serif' },
+    { label: 'Pretendard', value: 'Pretendard, "Noto Sans KR", Apple SD Gothic Neo, sans-serif' },
+    { label: 'Noto Sans KR', value: '"Noto Sans KR", "Apple SD Gothic Neo", sans-serif' },
+    { label: '나눔스퀘어', value: '"NanumSquare", "Noto Sans KR", sans-serif' },
+];
+
 export function ThemeEditor({ theme, onUpdate }: ThemeEditorProps) {
     return (
         <Card>
@@ -145,8 +152,41 @@ export function ThemeEditor({ theme, onUpdate }: ThemeEditorProps) {
                         </div>
                     </div>
 
-                    <div className="p-4 bg-muted rounded-lg">
-                        <p className="text-sm text-muted-foreground mb-3">미리보기</p>
+                    <div className="p-4 bg-muted rounded-lg space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">버튼 액션 (호버 색)</Label>
+                                <div className="flex gap-2 items-center">
+                                    <Input
+                                        type="color"
+                                        value={theme.buttonHoverColor || theme.buttonColor}
+                                        onChange={(e) => onUpdate('buttonHoverColor', e.target.value)}
+                                        className="w-14 h-10 p-1 cursor-pointer"
+                                    />
+                                    <Input
+                                        value={theme.buttonHoverColor || theme.buttonColor}
+                                        onChange={(e) => onUpdate('buttonHoverColor', e.target.value)}
+                                        placeholder="#000000"
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground">호버 시 버튼 배경에 적용됩니다.</p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-muted-foreground">폰트</Label>
+                                <select
+                                    className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                                    value={theme.fontFamily || fontOptions[0].value}
+                                    onChange={(e) => onUpdate('fontFamily', e.target.value)}
+                                >
+                                    {fontOptions.map((opt) => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                                <p className="text-xs text-muted-foreground">모바일/미리보기 전체에 적용됩니다.</p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-muted-foreground">미리보기</p>
                         <div
                             className="p-4 rounded-2xl transition-all border-2"
                             style={{
@@ -155,9 +195,12 @@ export function ThemeEditor({ theme, onUpdate }: ThemeEditorProps) {
                                 borderColor: theme.buttonBorderColor || 'transparent',
                                 textShadow: theme.textBorderColor ? `-1px -1px 0 ${theme.textBorderColor}, 1px -1px 0 ${theme.textBorderColor}, -1px 1px 0 ${theme.textBorderColor}, 1px 1px 0 ${theme.textBorderColor}` : 'none',
                                 borderRadius: theme.buttonStyle === 'rounded' ? '1rem' : theme.buttonStyle === 'square' ? '0' : '9999px',
+                                fontFamily: theme.fontFamily || 'inherit',
+                                ['--hover-color' as any]: theme.buttonHoverColor || theme.buttonColor,
                             }}
                         >
                             <p className="text-center font-medium">버튼 미리보기</p>
+                            <p className="text-center text-xs mt-2 opacity-80">호버 시 색상: {theme.buttonHoverColor || theme.buttonColor}</p>
                         </div>
                     </div>
                 </div>

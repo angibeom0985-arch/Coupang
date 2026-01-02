@@ -48,7 +48,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
             </div>
 
             <div className="relative">
-                <div className="w-[375px] h-[667px] bg-white rounded-[3rem] shadow-2xl border-8 border-black overflow-hidden flex flex-col">
+                <div className="w-[375px] h-[667px] bg-white rounded-[3rem] shadow-2xl border-8 border-black overflow-hidden flex flex-col" style={{ fontFamily: data.profile.theme.fontFamily || 'inherit' }}>
                     <div className="h-6 w-full bg-white shrink-0"></div>
 
                     {showBanner && (

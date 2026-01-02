@@ -153,7 +153,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                         value="manage"
                         className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6"
                     >
-                        데이터 관리
+                        분석
                     </TabsTrigger>
                 </TabsList>
 

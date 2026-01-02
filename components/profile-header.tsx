@@ -47,7 +47,7 @@ export function ProfileHeader({ profile }: ProfileHeaderProps) {
                         </div>
                     )}
 
-                    <div className={`space-y-2 ${showCover ? 'mt-6' : 'mt-4'}`}>
+                    <div className={`space-y-2 ${showCover ? 'mt-6' : 'mt-4'}`} style={{ fontFamily: profile.theme.fontFamily || 'inherit' }}>
                         <h1 className="text-xl font-bold" style={{ color: profile.theme.textColor }}>
                             {profile.name}
                         </h1>

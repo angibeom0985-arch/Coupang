@@ -40,6 +40,12 @@ const snsOptions = [
     })),
 ];
 
+const layoutOptions: { key: 'small' | 'medium' | 'large'; label: string; description: string }[] = [
+    { key: 'small', label: '작은 카드', description: '컴팩트한 텍스트 중심' },
+    { key: 'medium', label: '중간 카드', description: '기본 버튼 스타일' },
+    { key: 'large', label: '큰 카드', description: '이미지를 크게 보여줍니다' },
+];
+
 export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showSnsDialog, setShowSnsDialog] = useState(false);
@@ -53,6 +59,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             url: 'https://',
             icon: 'link',
             enabled: true,
+            layout: 'medium',
         };
         onUpdate([...links, newLink]);
         setEditingId(newLink.id);
@@ -90,9 +97,24 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             url: preset.url,
             icon: `sns:${platform}`,
             enabled: true,
+            layout: 'medium',
         };
         onUpdate([...links, newLink]);
         setEditingId(newLink.id);
+    };
+
+    const parseSnsIcons = (icon?: string): SnsKey[] => {
+        if (!icon || !icon.startsWith('sns:')) return [];
+        return icon
+            .replace('sns:', '')
+            .split(',')
+            .map((k) => k.trim() as SnsKey)
+            .filter((k) => snsPresets[k]);
+    };
+
+    const updateSnsIcons = (id: string, nextList: SnsKey[]) => {
+        const value = nextList.length ? `sns:${nextList.join(',')}` : '';
+        updateItem(id, { icon: value });
     };
 
     const deleteItem = (id: string) => {
@@ -166,6 +188,12 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         return null;
     };
 
+    const getLayoutValue = (item: ContentItem): 'small' | 'medium' | 'large' => {
+        if (item.type !== 'link') return 'medium';
+        if (item.layout === 'small' || item.layout === 'large') return item.layout;
+        return 'medium';
+    };
+
     const sortedLinks = useMemo(() => links, [links]);
 
     return (
@@ -192,7 +220,9 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                 </div>
 
                 <div className="space-y-3">
-                    {sortedLinks.map((item, index) => (
+                    {sortedLinks.map((item, index) => {
+                        const layoutValue = getLayoutValue(item);
+                        return (
                         <div
                             key={item.id}
                             className="border rounded-lg p-4 space-y-3 bg-card hover:shadow-md transition-shadow"
@@ -230,15 +260,38 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                             onChange={(e) => updateItem(item.id, { title: e.target.value })}
                                                             placeholder="링크 제목"
                                                         />
-                                                        <select
-                                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                                                            value={item.icon?.startsWith('sns:') ? item.icon.replace('sns:', '') : ''}
-                                                            onChange={(e) => handleSNSSelect(item.id, e.target.value)}
-                                                        >
-                                                            {snsOptions.map((opt) => (
-                                                                <option key={opt.key || 'default'} value={opt.key}>{opt.label}</option>
-                                                            ))}
-                                                        </select>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            <button
+                                                                type="button"
+                                                                className={`px-3 py-2 rounded-md border text-xs ${!item.icon?.startsWith('sns:') ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'}`}
+                                                                onClick={() => updateSnsIcons(item.id, [])}
+                                                            >
+                                                                일반 링크
+                                                            </button>
+                                                            {Object.entries(snsPresets).map(([key, preset]) => {
+                                                                const selectedList = parseSnsIcons(item.icon);
+                                                                const selected = selectedList.includes(key as SnsKey);
+                                                                return (
+                                                                    <button
+                                                                        key={key}
+                                                                        type="button"
+                                                                        className={`flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition ${
+                                                                            selected ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'
+                                                                        }`}
+                                                                        onClick={() => {
+                                                                            const current = parseSnsIcons(item.icon);
+                                                                            const next = selected
+                                                                                ? current.filter((k) => k !== key)
+                                                                                : [...current, key as SnsKey];
+                                                                            updateSnsIcons(item.id, next);
+                                                                        }}
+                                                                    >
+                                                                        <img src={preset.icon} alt={preset.title} className="w-5 h-5 rounded-full" />
+                                                                        <span>{preset.title}</span>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
                                                     </div>
                                                     <Input
                                                         value={item.url}
@@ -276,6 +329,30 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                     {uploadingId === item.id && <span className="text-xs text-muted-foreground">업로드 중...</span>}
                                                 </div>
                                             </div>
+                                            <div className="pt-1">
+                                                <div className="text-xs text-muted-foreground mb-2">레이아웃</div>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                                    {layoutOptions.map((opt) => (
+                                                        <button
+                                                            key={opt.key}
+                                                            type="button"
+                                                            onClick={() => updateItem(item.id, { layout: opt.key })}
+                                                            className={`flex flex-col items-center gap-2 rounded-lg border p-2 text-xs transition ${
+                                                                layoutValue === opt.key
+                                                                    ? 'border-primary bg-primary/10'
+                                                                    : 'border-input hover:border-primary/40'
+                                                            }`}
+                                                        >
+                                                            <div className="w-full aspect-[16/10] rounded-md border border-dashed bg-muted flex items-center justify-center text-[11px]">
+                                                                {opt.label}
+                                                            </div>
+                                                            <div className="text-[11px] text-muted-foreground text-center leading-tight">
+                                                                {opt.description}
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : item.type === 'text' ? (
                                         <Textarea
@@ -285,8 +362,8 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                             rows={2}
                                         />
                                     ) : (
-                                        <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900 flex flex-col gap-3">
-                                            <label className="text-xs font-medium text-amber-900">광고 코드</label>
+                                        <div className="text-sm flex flex-col gap-3">
+                                            <label className="text-xs font-medium text-foreground">광고 코드</label>
                                             <Textarea
                                                 value={item.adHtml || ''}
                                                 onChange={(e) => updateItem(item.id, { adHtml: e.target.value })}
@@ -295,7 +372,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                 className="font-mono text-xs"
                                             />
                                             {item.adHtml ? (
-                                                <div className="rounded border bg-white/60 p-2" dangerouslySetInnerHTML={{ __html: item.adHtml }} />
+                                                <div className="w-full" dangerouslySetInnerHTML={{ __html: item.adHtml }} />
                                             ) : (
                                                 <details className="text-xs text-muted-foreground">
                                                     <summary className="cursor-pointer text-blue-700">광고 설정 방법</summary>
@@ -327,7 +404,8 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                 {item.type === 'link' ? '일반 링크' : item.type === 'text' ? '텍스트' : '광고 영역'} · {item.enabled ? '노출' : '숨김'}
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
 
                     {links.length === 0 && (
                         <div className="text-center py-8 text-muted-foreground">
@@ -347,17 +425,18 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
-                        <div className="grid grid-cols-5 gap-3 max-h-[60vh] overflow-y-auto">
+                        <div className="flex gap-3 overflow-x-auto pb-2">
                             {Object.entries(snsPresets).map(([key, preset]) => (
                                 <button
                                     key={key}
                                     onClick={() => { addSNS(key as SnsKey); setShowSnsDialog(false); }}
-                                    className="flex items-center justify-center rounded-lg border border-transparent p-2 hover:bg-muted transition bg-transparent"
+                                    className="flex items-center gap-3 rounded-lg border px-3 py-2 bg-white hover:bg-muted transition whitespace-nowrap"
                                     title={preset.title}
                                 >
-                                    <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border">
                                         <img src={preset.icon} alt={preset.title} className="w-full h-full object-contain" />
                                     </div>
+                                    <span className="text-sm font-medium">{preset.title}</span>
                                 </button>
                             ))}
                         </div>
@@ -367,4 +446,3 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         </Card>
     );
 }
-

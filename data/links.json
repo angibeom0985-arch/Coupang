@@ -10,7 +10,9 @@
             "textColor": "#1a1a1a",
             "buttonColor": "#000000",
             "buttonTextColor": "#ffffff",
-            "buttonStyle": "rounded"
+            "buttonStyle": "rounded",
+            "buttonHoverColor": "#1f2937",
+            "fontFamily": "Inter, system-ui, -apple-system, sans-serif"
         }
     },
     "adBanner": "좌측 쿠팡 링크 크리에이터 맞팔·문의 환영합니다",

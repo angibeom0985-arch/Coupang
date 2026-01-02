@@ -18,6 +18,24 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Supabase service key or URL is missing. Set SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL.' }, { status: 500 });
         }
 
+        // Guard against accidentally using the anon/public key, which will hit RLS.
+        const keyRole = (() => {
+            try {
+                const payload = JSON.parse(Buffer.from(supabaseKey.split('.')[1] || '', 'base64').toString('utf-8'));
+                return payload?.role as string | undefined;
+            } catch (err) {
+                console.error('Failed to decode Supabase key:', err);
+                return undefined;
+            }
+        })();
+
+        if (keyRole !== 'service_role') {
+            return NextResponse.json(
+                { error: 'SUPABASE_SERVICE_ROLE_KEY must be the service role key (role: service_role). Please update the environment variable with the correct key from Supabase.' },
+                { status: 500 }
+            );
+        }
+
         const supabase = createClient(supabaseUrl, supabaseKey);
 
         const arrayBuffer = await file.arrayBuffer();

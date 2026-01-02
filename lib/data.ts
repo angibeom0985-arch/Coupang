@@ -9,6 +9,8 @@ export interface Theme {
     buttonStyle: 'rounded' | 'square' | 'pill';
     buttonBorderColor?: string;
     textBorderColor?: string;
+    buttonHoverColor?: string;
+    fontFamily?: string;
 }
 
 export interface Profile {
@@ -27,6 +29,7 @@ export interface LinkItem {
     url: string;
     icon: string;
     enabled: boolean;
+    layout?: 'small' | 'medium' | 'large';
 }
 
 export interface TextItem {
