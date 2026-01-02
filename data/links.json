@@ -17,6 +17,7 @@
     },
     "adBanner": "좌측 쿠팡 링크 크리에이터 맞팔·문의 환영합니다",
     "adBannerEnabled": true,
+    "adBannerScrollEnabled": true,
     "links": [
         {
             "id": "1",

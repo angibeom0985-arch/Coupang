@@ -46,6 +46,7 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
     };
 
     const bannerEnabled = data.adBannerEnabled !== false;
+    const bannerScrollEnabled = data.adBannerScrollEnabled !== false;
     const bannerTextColors = ['#0f172a', '#ffffff', '#334155', '#f97316'];
     const bannerBgColors = ['#fde68a', '#fca5a5', '#d9f99d', '#c7d2fe', '#0f172a', '#f97316'];
 
@@ -62,6 +63,13 @@ export function EditorPanel({ data, onDataChange }: EditorPanelProps) {
                     <Switch
                         checked={bannerEnabled}
                         onCheckedChange={(checked) => onDataChange({ ...data, adBannerEnabled: checked })}
+                    />
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                    <p className="text-sm font-medium">배너 스크롤</p>
+                    <Switch
+                        checked={bannerScrollEnabled}
+                        onCheckedChange={(checked) => onDataChange({ ...data, adBannerScrollEnabled: checked })}
                     />
                 </div>
                 <Textarea

@@ -55,6 +55,7 @@ export interface LinksData {
     links: ContentItem[];
     adBanner?: string;
     adBannerEnabled?: boolean;
+    adBannerScrollEnabled?: boolean;
     profileEnabled?: boolean;
     siteTitle?: string;
     faviconPngUrl?: string;

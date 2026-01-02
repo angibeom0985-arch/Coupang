@@ -56,6 +56,7 @@ export function PreviewPanel({ data, onReorder }: PreviewPanelProps) {
                             text={data.adBanner || ""}
                             background={data.adBannerBackground}
                             textColor={data.adBannerTextColor}
+                            scrollEnabled={data.adBannerScrollEnabled !== false}
                         />
                     )}
 
