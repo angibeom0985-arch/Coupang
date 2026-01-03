@@ -152,11 +152,11 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     const getIconSrc = (icon?: string) => {
         if (!icon) return null;
         if (icon.startsWith('sns:')) {
-            const key = icon.replace('sns:', '') as SnsKey;
-            const preset = snsPresets[key];
-            return preset ? preset.icon : null;
+            return parseSnsIcons(icon)
+                .map((k) => snsPresets[k]?.icon)
+                .filter(Boolean) as string[];
         }
-        if (icon.startsWith('http')) return icon;
+        if (icon.startsWith('http')) return [icon];
         return null;
     };
 
@@ -196,6 +196,9 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                         const layoutValue = getLayoutValue(item);
                         const selectedSns = parseSnsIcons(item.icon);
                         const isSnsLink = selectedSns.length > 0;
+                        const snsIconSources = selectedSns
+                            .map((k) => snsPresets[k]?.icon)
+                            .filter(Boolean) as string[];
                         return (
                         <div
                             key={item.id}
@@ -247,11 +250,18 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                                                 selected ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'
                                                                             }`}
                                                                             onClick={() => {
-                                                                                updateSnsIcons(item.id, [key as SnsKey]);
-                                                                                updateItem(item.id, {
-                                                                                    title: `${preset.title} 링크`,
-                                                                                    url: preset.url,
-                                                                                });
+                                                                                const current = parseSnsIcons(item.icon);
+                                                                                const next = selected
+                                                                                    ? current.filter((k) => k !== key)
+                                                                                    : [...current, key as SnsKey];
+                                                                                updateSnsIcons(item.id, next);
+                                                                                if (next.length) {
+                                                                                    const primary = snsPresets[next[0] as SnsKey];
+                                                                                    updateItem(item.id, {
+                                                                                        title: `${primary.title} 링크`,
+                                                                                        url: primary.url,
+                                                                                    });
+                                                                                }
                                                                             }}
                                                                         >
                                                                             <img src={preset.icon} alt={preset.title} className="w-5 h-5 rounded-full" />
@@ -272,8 +282,12 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                     <label className="cursor-pointer block relative group w-full">
                                                         <div className={`w-full h-20 rounded-md border flex items-center justify-center overflow-hidden bg-muted ${!getIconSrc(item.icon) ? 'text-muted-foreground' : ''}`}>
                                                             {getIconSrc(item.icon) ? (
-                                                                typeof getIconSrc(item.icon) === 'string' ? (
-                                                                    <img src={getIconSrc(item.icon) as string} alt="Icon" className="w-full h-full object-cover" />
+                                                                Array.isArray(getIconSrc(item.icon)) ? (
+                                                                    <div className="flex items-center justify-center gap-2 w-full h-full">
+                                                                        {(getIconSrc(item.icon) as string[]).map((src, idx) => (
+                                                                            <img key={src + idx} src={src} alt="Icon" className="w-8 h-8 object-contain" />
+                                                                        ))}
+                                                                    </div>
                                                                 ) : (
                                                                     getIconSrc(item.icon) as React.ReactNode
                                                                 )
@@ -298,30 +312,32 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                     {uploadingId === item.id && <span className="text-xs text-muted-foreground">업로드 중...</span>}
                                                 </div>
                                             </div>
-                                            <div className="pt-1">
-                                                <div className="text-xs text-muted-foreground mb-2">카드 레이아웃</div>
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                                    {layoutOptions.map((opt) => (
-                                                        <button
-                                                            key={opt.key}
-                                                            type="button"
-                                                            onClick={() => updateItem(item.id, { layout: opt.key })}
-                                                            className={`flex flex-col items-center gap-2 rounded-lg border p-2 text-xs transition ${
-                                                                layoutValue === opt.key
-                                                                    ? 'border-primary bg-primary/10'
-                                                                    : 'border-input hover:border-primary/40'
-                                                            }`}
-                                                        >
-                                                            <div className="w-full aspect-[16/10] rounded-md border border-dashed bg-muted flex items-center justify-center text-[11px]">
-                                                                {opt.label}
-                                                            </div>
-                                                            <div className="text-[11px] text-muted-foreground text-center leading-tight">
-                                                                {opt.description}
-                                                            </div>
-                                                        </button>
-                                                    ))}
+                                            {!isSnsLink && (
+                                                <div className="pt-1">
+                                                    <div className="text-xs text-muted-foreground mb-2">카드 레이아웃</div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                                        {layoutOptions.map((opt) => (
+                                                            <button
+                                                                key={opt.key}
+                                                                type="button"
+                                                                onClick={() => updateItem(item.id, { layout: opt.key })}
+                                                                className={`flex flex-col items-center gap-2 rounded-lg border p-2 text-xs transition ${
+                                                                    layoutValue === opt.key
+                                                                        ? 'border-primary bg-primary/10'
+                                                                        : 'border-input hover:border-primary/40'
+                                                                }`}
+                                                            >
+                                                                <div className="w-full aspect-[16/10] rounded-md border border-dashed bg-muted flex items-center justify-center text-[11px]">
+                                                                    {opt.label}
+                                                                </div>
+                                                                <div className="text-[11px] text-muted-foreground text-center leading-tight">
+                                                                    {opt.description}
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
                                     ) : item.type === 'text' ? (
                                         <Textarea
