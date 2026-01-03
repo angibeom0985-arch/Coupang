@@ -9,7 +9,6 @@ import {
     Trash2,
     Link as LinkIcon,
     Type,
-    Plus,
     MoveUp,
     MoveDown,
     X
@@ -32,22 +31,13 @@ const snsPresets: Record<SnsKey, { title: string; url: string; icon: string }> =
     tiktok: { title: '틱톡', url: 'https://www.tiktok.com/', icon: TiktokLogo.src },
 };
 
-const snsOptions = [
-    { key: '', label: '일반 링크' },
-    ...Object.entries(snsPresets).map(([key, value]) => ({
-        key,
-        label: value.title,
-    })),
-];
-
 const layoutOptions: { key: 'small' | 'medium' | 'large'; label: string; description: string }[] = [
-    { key: 'small', label: '작은 카드', description: '컴팩트한 텍스트 중심' },
-    { key: 'medium', label: '중간 카드', description: '기본 버튼 스타일' },
-    { key: 'large', label: '큰 카드', description: '이미지를 크게 보여줍니다' },
+    { key: 'small', label: '스몰 카드', description: '콤팩트한 텍스트 중심' },
+    { key: 'medium', label: '중간 카드', description: '기본 버튼 형태' },
+    { key: 'large', label: '라지 카드', description: '이미지를 크게 보여줍니다' },
 ];
 
-export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
-    const [editingId, setEditingId] = useState<string | null>(null);
+export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
     const [showSnsDialog, setShowSnsDialog] = useState(false);
     const [uploadingId, setUploadingId] = useState<string | null>(null);
 
@@ -62,7 +52,6 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             layout: 'medium',
         };
         onUpdate([...links, newLink]);
-        setEditingId(newLink.id);
     };
 
     const addText = () => {
@@ -73,7 +62,6 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             enabled: true,
         };
         onUpdate([...links, newText]);
-        setEditingId(newText.id);
     };
 
     const addAdNote = () => {
@@ -84,8 +72,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             enabled: true,
         };
         onUpdate([...links, newAd]);
-        setEditingId(newAd.id);
-        alert('설정 탭에 광고 스크립트를 입력해 주세요.');
+        alert('설정 메뉴에 광고 코드를 입력해주세요.');
     };
 
     const addSNS = (platform: SnsKey) => {
@@ -93,14 +80,13 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         const newLink: ContentItem = {
             id: Date.now().toString(),
             type: 'link',
-            title: `${preset.title} 프로필`,
+            title: `${preset.title} 링크`,
             url: preset.url,
             icon: `sns:${platform}`,
             enabled: true,
             layout: 'medium',
         };
         onUpdate([...links, newLink]);
-        setEditingId(newLink.id);
     };
 
     const parseSnsIcons = (icon?: string): SnsKey[] => {
@@ -137,19 +123,6 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
         onUpdate(newLinks);
     };
 
-    const handleSNSSelect = (id: string, platform: string) => {
-        if (!platform) {
-            updateItem(id, { icon: '' });
-            return;
-        }
-        const preset = snsPresets[platform as SnsKey];
-        updateItem(id, {
-            icon: `sns:${platform}`,
-            title: `${preset.title} 프로필`,
-            url: preset.url,
-        });
-    };
-
     const uploadIcon = async (id: string, file: File) => {
         setUploadingId(id);
         try {
@@ -171,7 +144,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
             updateItem(id, { icon: url });
         } catch (err: any) {
             console.error("Upload failed:", err);
-            alert("이미지 업로드 실패: " + (err.message || "잠시 후 다시 시도해주세요"));
+            alert("이미지 업로드 실패: " + (err.message || "다시 시도해 주세요"));
         } finally {
             setUploadingId(null);
         }
@@ -222,6 +195,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                 <div className="space-y-3">
                     {sortedLinks.map((item, index) => {
                         const layoutValue = getLayoutValue(item);
+                        const selectedSns = parseSnsIcons(item.icon);
                         return (
                         <div
                             key={item.id}
@@ -260,37 +234,50 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                             onChange={(e) => updateItem(item.id, { title: e.target.value })}
                                                             placeholder="링크 제목"
                                                         />
-                                                        <div className="flex flex-wrap gap-2">
-                                                            <button
-                                                                type="button"
-                                                                className={`px-3 py-2 rounded-md border text-xs ${!item.icon?.startsWith('sns:') ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'}`}
-                                                                onClick={() => updateSnsIcons(item.id, [])}
-                                                            >
-                                                                일반 링크
-                                                            </button>
-                                                            {Object.entries(snsPresets).map(([key, preset]) => {
-                                                                const selectedList = parseSnsIcons(item.icon);
-                                                                const selected = selectedList.includes(key as SnsKey);
-                                                                return (
+                                                        <div className="space-y-2">
+                                                            <div className="space-y-1">
+                                                                <div className="text-xs font-medium text-muted-foreground">일반 링크</div>
+                                                                <div className="flex flex-wrap gap-2">
                                                                     <button
-                                                                        key={key}
                                                                         type="button"
-                                                                        className={`flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition ${
-                                                                            selected ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'
-                                                                        }`}
-                                                                        onClick={() => {
-                                                                            const current = parseSnsIcons(item.icon);
-                                                                            const next = selected
-                                                                                ? current.filter((k) => k !== key)
-                                                                                : [...current, key as SnsKey];
-                                                                            updateSnsIcons(item.id, next);
-                                                                        }}
+                                                                        className={`px-3 py-2 rounded-md border text-xs ${!item.icon?.startsWith('sns:') ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'}`}
+                                                                        onClick={() => updateSnsIcons(item.id, [])}
                                                                     >
-                                                                        <img src={preset.icon} alt={preset.title} className="w-5 h-5 rounded-full" />
-                                                                        <span>{preset.title}</span>
+                                                                        일반 링크
                                                                     </button>
-                                                                );
-                                                            })}
+                                                                </div>
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <div className="text-xs font-medium text-muted-foreground">SNS 설정 (유튜브 · 인스타 · 틱톡)</div>
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {Object.entries(snsPresets).map(([key, preset]) => {
+                                                                        const selected = selectedSns.includes(key as SnsKey);
+                                                                        return (
+                                                                            <button
+                                                                                key={key}
+                                                                                type="button"
+                                                                                className={`flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition ${
+                                                                                    selected ? 'border-primary bg-primary/10' : 'border-input hover:border-primary/40'
+                                                                                }`}
+                                                                                onClick={() => {
+                                                                                    if (selected) {
+                                                                                        updateSnsIcons(item.id, []);
+                                                                                    } else {
+                                                                                        updateSnsIcons(item.id, [key as SnsKey]);
+                                                                                        updateItem(item.id, {
+                                                                                            title: `${preset.title} 링크`,
+                                                                                            url: preset.url,
+                                                                                        });
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <img src={preset.icon} alt={preset.title} className="w-5 h-5 rounded-full" />
+                                                                                <span>{preset.title}</span>
+                                                                            </button>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <Input
@@ -330,7 +317,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                 </div>
                                             </div>
                                             <div className="pt-1">
-                                                <div className="text-xs text-muted-foreground mb-2">레이아웃</div>
+                                                <div className="text-xs text-muted-foreground mb-2">카드 레이아웃</div>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                                                     {layoutOptions.map((opt) => (
                                                         <button
@@ -358,7 +345,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                         <Textarea
                                             value={item.content}
                                             onChange={(e) => updateItem(item.id, { content: e.target.value })}
-                                            placeholder="텍스트를 입력하세요."
+                                            placeholder="텍스트를 입력해 주세요"
                                             rows={2}
                                         />
                                     ) : (
@@ -367,7 +354,7 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                             <Textarea
                                                 value={item.adHtml || ''}
                                                 onChange={(e) => updateItem(item.id, { adHtml: e.target.value })}
-                                                placeholder="<div>여기에 광고 스크립트를 넣어주세요</div>"
+                                                placeholder="<div>여기에 광고 코드를 붙여 넣어주세요</div>"
                                                 rows={4}
                                                 className="font-mono text-xs"
                                             />
@@ -375,9 +362,9 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
                                                 <div className="w-full" dangerouslySetInnerHTML={{ __html: item.adHtml }} />
                                             ) : (
                                                 <details className="text-xs text-muted-foreground">
-                                                    <summary className="cursor-pointer text-blue-700">광고 설정 방법</summary>
+                                                    <summary className="cursor-pointer text-blue-700">광고 설정 안내</summary>
                                                     <div className="mt-2 space-y-1 text-xs leading-relaxed">
-                                                        <p>설정 탭에 제공된 광고 스크립트를 붙여넣어 주세요.</p>
+                                                        <p>설정 메뉴에 제공된 광고 스니펫을 붙여 넣어주세요.</p>
                                                     </div>
                                                 </details>
                                             )}
@@ -409,8 +396,8 @@ export function LinkEditor({ links, onUpdate, adCode }: LinkEditorProps) {
 
                     {links.length === 0 && (
                         <div className="text-center py-8 text-muted-foreground">
-                            <p>등록된 링크가 없습니다.</p>
-                            <p className="text-sm mt-1">상단 버튼을 눌러 링크를 추가해 주세요.</p>
+                            <p>아직 등록된 링크가 없습니다.</p>
+                            <p className="text-sm mt-1">위의 버튼을 눌러 링크를 추가해 주세요.</p>
                         </div>
                     )}
                 </div>
