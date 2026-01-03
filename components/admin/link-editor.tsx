@@ -292,7 +292,7 @@ export function LinkEditor({ links, onUpdate }: LinkEditorProps) {
                                                                     getIconSrc(item.icon) as React.ReactNode
                                                                 )
                                                             ) : (
-                                                                <span className="text-xs text-center p-1">아이콘 업로드</span>
+                                                                <span className="text-xs text-center p-1">이미지 업로드</span>
                                                             )}
                                                             <div className="absolute inset-0 bg-black/30 hidden group-hover:flex items-center justify-center text-white text-xs">
                                                                 변경
