@@ -130,14 +130,14 @@ export default function AdminPage() {
             </header>
 
             {/* Main Content */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden min-h-0">
                 {/* Left: Preview */}
-                <div className="w-1/2 border-r">
+                <div className="w-1/2 border-r overflow-y-auto min-h-0">
                     <PreviewPanel data={data} onReorder={handleReorder} />
                 </div>
 
                 {/* Right: Editor */}
-                <div className="w-1/2 overflow-y-auto">
+                <div className="w-1/2 overflow-y-auto min-h-0">
                     <EditorPanel data={data} onDataChange={setData} />
                 </div>
             </div>
